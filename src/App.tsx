@@ -25,6 +25,7 @@ function App() {
   const [engine, setEngine] = useState<GameEngine | null>(null);
   const [isPaused, setIsPaused] = useState(false);
   const [previousScreen, setPreviousScreen] = useState<GameScreen>('TITLE');
+  const containerRef = useRef<HTMLDivElement>(null);
   // Whether the browser is currently in fullscreen mode
   const [isFullscreenActive, setIsFullscreenActive] = useState(
     typeof document !== 'undefined' ? isFullscreen() : false

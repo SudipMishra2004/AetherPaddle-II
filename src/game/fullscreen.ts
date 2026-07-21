@@ -42,7 +42,9 @@ export function isFullscreen(): boolean {
  */
 export async function lockLandscape(): Promise<boolean> {
   try {
-    const orientation = screen.orientation;
+    const orientation = screen.orientation as unknown as {
+      lock?: (orientation: string) => Promise<void>;
+    };
     if (orientation && typeof orientation.lock === 'function') {
       await orientation.lock('landscape');
       return true;
