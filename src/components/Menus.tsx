@@ -30,7 +30,7 @@ export function TitleScreen({ onStartGame, onContinueGame, onOpenTutorial, onOpe
   }, []);
 
   return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ background: `linear-gradient(135deg, ${COLORS.background} 0%, #B8F0BE 100%)` }}>
+    <div className="absolute inset-0 flex flex-col items-center justify-center p-4 overflow-y-auto min-h-[100dvh]" style={{ background: `linear-gradient(135deg, ${COLORS.background} 0%, #B8F0BE 100%)` }}>
       {/* Animated background particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {Array.from({ length: 20 }).map((_, i) => (
@@ -50,94 +50,94 @@ export function TitleScreen({ onStartGame, onContinueGame, onOpenTutorial, onOpe
         ))}
       </div>
 
-      {/* Game Title */}
-      <div className="mb-4 text-center relative z-10">
-        <h1
-          className="text-7xl font-black tracking-tight mb-2"
-          style={{
-            fontFamily: "'Fredoka One', 'Nunito', sans-serif",
-            color: COLORS.primary,
-            textShadow: `0 4px 0 ${COLORS.secondary}, 0 8px 20px rgba(90, 24, 154, 0.3)`,
-            animation: 'titlePulse 3s ease-in-out infinite',
-          }}
-        >
-          AetherPaddle
-        </h1>
-        <span
-          className="text-4xl font-bold"
-          style={{
-            fontFamily: "'Fredoka One', sans-serif",
-            color: COLORS.accent,
-            textShadow: `0 2px 0 rgba(255, 158, 0, 0.3)`,
-          }}
-        >
-          II
-        </span>
-      </div>
+      <div className="flex flex-col items-center justify-center max-w-lg w-full my-auto py-4 relative z-10">
+        {/* Game Title */}
+        <div className="mb-2 sm:mb-4 text-center">
+          <h1
+            className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight mb-1"
+            style={{
+              fontFamily: "'Fredoka One', 'Nunito', sans-serif",
+              color: COLORS.primary,
+              textShadow: `0 4px 0 ${COLORS.secondary}, 0 8px 20px rgba(90, 24, 154, 0.3)`,
+              animation: 'titlePulse 3s ease-in-out infinite',
+            }}
+          >
+            AetherPaddle{' '}
+            <span
+              className="text-3xl sm:text-5xl md:text-6xl font-bold inline-block"
+              style={{
+                fontFamily: "'Fredoka One', sans-serif",
+                color: COLORS.accent,
+                textShadow: `0 2px 0 rgba(255, 158, 0, 0.3)`,
+              }}
+            >
+              II
+            </span>
+          </h1>
+        </div>
 
-      <p className="text-lg mb-10 font-medium" style={{ color: COLORS.uiTextSecondary }}>
-        Physics-Based Arcade Challenge
-      </p>
+        <p className="text-xs sm:text-base mb-4 sm:mb-8 font-semibold text-center" style={{ color: COLORS.uiTextSecondary }}>
+          Physics-Based Arcade Challenge
+        </p>
 
-      {/* Menu Buttons */}
-      <div className="flex flex-col gap-4 w-72 relative z-10">
-        {hasSave && (
+        {/* Menu Buttons */}
+        <div className="flex flex-col gap-2.5 sm:gap-4 w-64 sm:w-72">
+          {hasSave && (
+            <MenuButton
+              icon={<Play size={20} />}
+              label="CONTINUE"
+              sublabel="Resume your journey"
+              color={COLORS.secondary}
+              hoverColor={COLORS.primary}
+              onClick={onContinueGame}
+              isHovered={hoveredBtn === 'continue'}
+              onHover={() => setHoveredBtn('continue')}
+              onLeave={() => setHoveredBtn(null)}
+            />
+          )}
+
           <MenuButton
-            icon={<Play size={22} />}
-            label="CONTINUE"
-            sublabel="Resume your journey"
-            color={COLORS.secondary}
-            hoverColor={COLORS.primary}
-            onClick={onContinueGame}
-            isHovered={hoveredBtn === 'continue'}
-            onHover={() => setHoveredBtn('continue')}
+            icon={<ChevronRight size={20} />}
+            label="NEW GAME"
+            sublabel="Start fresh"
+            color={COLORS.accent}
+            hoverColor="#E8890A"
+            onClick={onStartGame}
+            isHovered={hoveredBtn === 'newgame'}
+            onHover={() => setHoveredBtn('newgame')}
             onLeave={() => setHoveredBtn(null)}
           />
-        )}
 
-        <MenuButton
-          icon={<ChevronRight size={22} />}
-          label="NEW GAME"
-          sublabel="Start fresh"
-          color={COLORS.accent}
-          hoverColor="#E8890A"
-          onClick={onStartGame}
-          isHovered={hoveredBtn === 'newgame'}
-          onHover={() => setHoveredBtn('newgame')}
-          onLeave={() => setHoveredBtn(null)}
-        />
+          <MenuButton
+            icon={<HelpCircle size={20} />}
+            label="HOW TO PLAY"
+            sublabel="Learn the mechanics"
+            color={COLORS.uiTextSecondary}
+            hoverColor={COLORS.primary}
+            onClick={onOpenTutorial}
+            isHovered={hoveredBtn === 'tutorial'}
+            onHover={() => setHoveredBtn('tutorial')}
+            onLeave={() => setHoveredBtn(null)}
+          />
 
-        <MenuButton
-          icon={<HelpCircle size={22} />}
-          label="HOW TO PLAY"
-          sublabel="Learn the mechanics"
-          color={COLORS.uiTextSecondary}
-          hoverColor={COLORS.primary}
-          onClick={onOpenTutorial}
-          isHovered={hoveredBtn === 'tutorial'}
-          onHover={() => setHoveredBtn('tutorial')}
-          onLeave={() => setHoveredBtn(null)}
-        />
+          <MenuButton
+            icon={<Settings size={20} />}
+            label="SETTINGS"
+            sublabel="Audio & more"
+            color={COLORS.uiTextSecondary}
+            hoverColor={COLORS.primary}
+            onClick={onOpenSettings}
+            isHovered={hoveredBtn === 'settings'}
+            onHover={() => setHoveredBtn('settings')}
+            onLeave={() => setHoveredBtn(null)}
+          />
+        </div>
 
-
-
-        <MenuButton
-          icon={<Settings size={22} />}
-          label="SETTINGS"
-          sublabel="Audio & more"
-          color={COLORS.uiTextSecondary}
-          hoverColor={COLORS.primary}
-          onClick={onOpenSettings}
-          isHovered={hoveredBtn === 'settings'}
-          onHover={() => setHoveredBtn('settings')}
-          onLeave={() => setHoveredBtn(null)}
-        />
+        {/* Version */}
+        <p className="mt-4 sm:mt-6 text-[11px] sm:text-xs opacity-50 text-center" style={{ color: COLORS.uiTextPrimary }}>
+          v2.0.0 — Touch or drag mouse to play
+        </p>
       </div>
-
-      {/* Version */}
-      <p className="absolute bottom-4 text-xs opacity-40" style={{ color: COLORS.uiTextPrimary }}>
-        v2.0.0 — Move mouse to control paddle
-      </p>
     </div>
   );
 }
@@ -162,11 +162,11 @@ function MenuButton({ icon, label, sublabel, color, hoverColor, onClick, isHover
       onClick={onClick}
       onMouseEnter={onHover}
       onMouseLeave={onLeave}
-      className="flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-200 w-full text-left"
+      className="flex items-center gap-3 sm:gap-4 px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-xl sm:rounded-2xl transition-all duration-200 w-full text-left"
       style={{
-        background: isHovered ? hoverColor : 'rgba(255, 255, 255, 0.6)',
+        background: isHovered ? hoverColor : 'rgba(255, 255, 255, 0.65)',
         color: isHovered ? '#FFFFFF' : color,
-        transform: isHovered ? 'translateX(8px) scale(1.02)' : 'translateX(0) scale(1)',
+        transform: isHovered ? 'translateX(6px) scale(1.01)' : 'translateX(0) scale(1)',
         boxShadow: isHovered
           ? `0 8px 24px ${hoverColor}40`
           : '0 2px 8px rgba(0, 0, 0, 0.08)',
@@ -174,9 +174,9 @@ function MenuButton({ icon, label, sublabel, color, hoverColor, onClick, isHover
     >
       <span className="flex-shrink-0">{icon}</span>
       <div className="flex-1 min-w-0">
-        <div className="font-bold text-base leading-tight">{label}</div>
+        <div className="font-bold text-sm sm:text-base leading-tight">{label}</div>
         {sublabel && (
-          <div className="text-xs opacity-60 mt-0.5">{sublabel}</div>
+          <div className="text-[10px] sm:text-xs opacity-60 mt-0.5">{sublabel}</div>
         )}
       </div>
       <ChevronRight size={16} className="flex-shrink-0 opacity-40" />
@@ -192,51 +192,51 @@ interface TutorialScreenProps {
 
 export function TutorialScreen({ onBack }: TutorialScreenProps) {
   return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center p-8" style={{ background: `linear-gradient(135deg, ${COLORS.background} 0%, #B8F0BE 100%)` }}>
-      <div className="max-w-2xl w-full">
+    <div className="absolute inset-0 flex flex-col items-center justify-center p-4 sm:p-8 overflow-y-auto min-h-[100dvh]" style={{ background: `linear-gradient(135deg, ${COLORS.background} 0%, #B8F0BE 100%)` }}>
+      <div className="max-w-2xl w-full my-auto py-4">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 mb-6 px-4 py-2 rounded-xl transition-all hover:translate-x-[-4px]"
+          className="flex items-center gap-2 mb-4 sm:mb-6 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-xl transition-all hover:translate-x-[-4px]"
           style={{ background: 'rgba(255,255,255,0.6)', color: COLORS.primary }}
         >
           <ArrowLeft size={18} />
-          <span className="font-semibold">Back</span>
+          <span className="font-semibold text-sm sm:text-base">Back</span>
         </button>
 
-        <h2 className="text-4xl font-black mb-8" style={{ color: COLORS.primary, fontFamily: "'Fredoka One', sans-serif" }}>
+        <h2 className="text-2xl sm:text-4xl font-black mb-4 sm:mb-6" style={{ color: COLORS.primary, fontFamily: "'Fredoka One', sans-serif" }}>
           How to Play
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6">
           <TutorialCard
-            icon={<Zap size={28} />}
+            icon={<Zap size={24} />}
             title="Control the Paddle"
-            description="Move your mouse horizontally to control the paddle. The ball bounces off it to hit bricks above."
+            description="Touch anywhere & drag horizontally (or use mouse) to control the paddle."
             color={COLORS.accent}
           />
           <TutorialCard
-            icon={<Star size={28} />}
+            icon={<Star size={24} />}
             title="Destroy Bricks"
-            description="Hit bricks with the ball to destroy them. Multi-hit bricks show their remaining HP and change color when damaged."
+            description="Hit bricks with the ball to destroy them. Multi-hit bricks show their remaining HP."
             color={COLORS.secondary}
           />
           <TutorialCard
-            icon={<Shield size={28} />}
+            icon={<Shield size={24} />}
             title="Collect Power-Ups"
-            description="Destroy special bricks to drop power-ups. Catch them with your paddle for temporary buffs like speed boost or shield."
+            description="Destroy special bricks to drop power-ups. Catch them for temporary buffs."
             color={COLORS.shield}
           />
           <TutorialCard
-            icon={<Trophy size={28} />}
+            icon={<Trophy size={24} />}
             title="Advance Levels"
             description="Clear all breakable bricks to complete the level and advance to the next stage."
             color="#FF006E"
           />
         </div>
 
-        <div className="mt-8 p-6 rounded-2xl max-h-[220px] overflow-y-auto" style={{ background: 'rgba(90, 24, 154, 0.08)' }}>
-          <h3 className="text-xl font-bold mb-4" style={{ color: COLORS.primary }}>Power-Up Guide</h3>
-          <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+        <div className="mt-4 sm:mt-6 p-4 sm:p-6 rounded-2xl max-h-[180px] sm:max-h-[220px] overflow-y-auto" style={{ background: 'rgba(90, 24, 154, 0.08)' }}>
+          <h3 className="text-base sm:text-xl font-bold mb-3" style={{ color: COLORS.primary }}>Power-Up Guide</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2.5 sm:gap-4">
             <PowerUpGuide type="HyperBounce" desc="Ball speed +50%" />
             <PowerUpGuide type="Magnetism" desc="Attract ball" />
             <PowerUpGuide type="AetherShield" desc="Bottom shield" />
@@ -376,10 +376,10 @@ export function GameOverScreen({ score, level, bestScore, onRestart, onMenu }: G
   const isNewBest = score > 0 && score >= bestScore;
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center" style={{ background: 'rgba(60, 9, 108, 0.85)', backdropFilter: 'blur(6px)' }}>
-      <div className="flex flex-col items-center gap-5 p-10 rounded-3xl max-w-md w-full mx-4" style={{ background: 'rgba(255, 255, 255, 0.95)', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}>
+    <div className="absolute inset-0 flex items-center justify-center p-4 overflow-y-auto min-h-[100dvh]" style={{ background: 'rgba(60, 9, 108, 0.85)', backdropFilter: 'blur(6px)' }}>
+      <div className="flex flex-col items-center gap-4 p-6 sm:p-10 rounded-3xl max-w-md w-full my-auto" style={{ background: 'rgba(255, 255, 255, 0.95)', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}>
         <h2
-          className="text-5xl font-black"
+          className="text-3xl sm:text-5xl font-black"
           style={{
             color: '#FF4D6D',
             fontFamily: "'Fredoka One', sans-serif",
@@ -390,30 +390,30 @@ export function GameOverScreen({ score, level, bestScore, onRestart, onMenu }: G
         </h2>
 
         {isNewBest && (
-          <div className="flex items-center gap-2 px-4 py-2 rounded-full" style={{ background: COLORS.accent + '20' }}>
-            <Star size={18} fill={COLORS.accent} color={COLORS.accent} />
-            <span className="font-bold text-sm" style={{ color: COLORS.accent }}>NEW BEST SCORE!</span>
+          <div className="flex items-center gap-2 px-4 py-1.5 rounded-full" style={{ background: COLORS.accent + '20' }}>
+            <Star size={16} fill={COLORS.accent} color={COLORS.accent} />
+            <span className="font-bold text-xs sm:text-sm" style={{ color: COLORS.accent }}>NEW BEST SCORE!</span>
           </div>
         )}
 
-        <div className="text-center space-y-2 w-full py-4" style={{ borderTop: '1px solid rgba(0,0,0,0.1)', borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
-          <div className="flex justify-between items-center">
-            <span className="text-sm" style={{ color: COLORS.uiTextSecondary }}>Final Score</span>
-            <span className="text-2xl font-black" style={{ color: COLORS.primary }}>{score.toLocaleString()}</span>
+        <div className="text-center space-y-2 w-full py-3 sm:py-4" style={{ borderTop: '1px solid rgba(0,0,0,0.1)', borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
+          <div className="flex justify-between items-center text-sm">
+            <span style={{ color: COLORS.uiTextSecondary }}>Final Score</span>
+            <span className="text-xl sm:text-2xl font-black" style={{ color: COLORS.primary }}>{score.toLocaleString()}</span>
           </div>
-          <div className="flex justify-between items-center">
-            <span className="text-sm" style={{ color: COLORS.uiTextSecondary }}>Level Reached</span>
+          <div className="flex justify-between items-center text-sm">
+            <span style={{ color: COLORS.uiTextSecondary }}>Level Reached</span>
             <span className="font-bold" style={{ color: COLORS.secondary }}>{level}</span>
           </div>
-          <div className="flex justify-between items-center">
-            <span className="text-sm" style={{ color: COLORS.uiTextSecondary }}>Best Score</span>
+          <div className="flex justify-between items-center text-sm">
+            <span style={{ color: COLORS.uiTextSecondary }}>Best Score</span>
             <span className="font-bold" style={{ color: COLORS.accent }}>{bestScore.toLocaleString()}</span>
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 w-full">
-          <ActionButton icon={<RotateCcw size={20} />} label="TRY AGAIN" color={COLORS.secondary} onClick={onRestart} />
-          <ActionButton icon={<Home size={20} />} label="MAIN MENU" color="#888" onClick={onMenu} />
+        <div className="flex flex-col gap-2.5 sm:gap-3 w-full">
+          <ActionButton icon={<RotateCcw size={18} />} label="TRY AGAIN" color={COLORS.secondary} onClick={onRestart} />
+          <ActionButton icon={<Home size={18} />} label="MAIN MENU" color="#888" onClick={onMenu} />
         </div>
       </div>
     </div>
@@ -429,7 +429,7 @@ interface VictoryScreenProps {
 
 export function VictoryScreen({ score, onMenu }: VictoryScreenProps) {
   return (
-    <div className="absolute inset-0 flex items-center justify-center" style={{ background: 'rgba(90, 24, 154, 0.85)', backdropFilter: 'blur(6px)' }}>
+    <div className="absolute inset-0 flex items-center justify-center p-4 overflow-y-auto min-h-[100dvh]" style={{ background: 'rgba(90, 24, 154, 0.85)', backdropFilter: 'blur(6px)' }}>
       {/* Confetti particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {Array.from({ length: 30 }).map((_, i) => (
@@ -451,11 +451,11 @@ export function VictoryScreen({ score, onMenu }: VictoryScreenProps) {
         ))}
       </div>
 
-      <div className="flex flex-col items-center gap-6 p-10 rounded-3xl max-w-md w-full mx-4 relative z-10" style={{ background: 'rgba(255, 255, 255, 0.95)', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}>
-        <Trophy size={64} style={{ color: COLORS.accent }} />
+      <div className="flex flex-col items-center gap-4 p-6 sm:p-10 rounded-3xl max-w-md w-full my-auto relative z-10" style={{ background: 'rgba(255, 255, 255, 0.95)', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}>
+        <Trophy size={48} style={{ color: COLORS.accent }} />
 
         <h2
-          className="text-5xl font-black text-center"
+          className="text-3xl sm:text-5xl font-black text-center"
           style={{
             color: COLORS.primary,
             fontFamily: "'Fredoka One', sans-serif",
@@ -464,16 +464,16 @@ export function VictoryScreen({ score, onMenu }: VictoryScreenProps) {
           VICTORY!
         </h2>
 
-        <p className="text-center text-lg" style={{ color: COLORS.uiTextSecondary }}>
+        <p className="text-center text-sm sm:text-lg" style={{ color: COLORS.uiTextSecondary }}>
           You have conquered all 20 levels and mastered the Aether!
         </p>
 
-        <div className="text-center py-4 px-8 rounded-2xl" style={{ background: 'rgba(255, 158, 0, 0.1)' }}>
-          <p className="text-sm mb-1" style={{ color: COLORS.uiTextSecondary }}>Final Score</p>
-          <p className="text-4xl font-black" style={{ color: COLORS.accent }}>{score.toLocaleString()}</p>
+        <div className="text-center py-3 sm:py-4 px-6 sm:px-8 rounded-2xl" style={{ background: 'rgba(255, 158, 0, 0.1)' }}>
+          <p className="text-xs sm:text-sm mb-1" style={{ color: COLORS.uiTextSecondary }}>Final Score</p>
+          <p className="text-2xl sm:text-4xl font-black" style={{ color: COLORS.accent }}>{score.toLocaleString()}</p>
         </div>
 
-        <ActionButton icon={<Home size={20} />} label="MAIN MENU" color={COLORS.secondary} onClick={onMenu} />
+        <ActionButton icon={<Home size={18} />} label="MAIN MENU" color={COLORS.secondary} onClick={onMenu} />
       </div>
     </div>
   );
