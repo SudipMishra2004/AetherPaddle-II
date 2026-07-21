@@ -315,17 +315,25 @@ interface PauseScreenProps {
 
 export function PauseScreen({ onResume, onRestart, onQuit, engine }: PauseScreenProps) {
   const state = engine?.getState();
+  const [settings, setSettings] = useState(getSettings());
+
+  const handleSensitivityChange = (val: number) => {
+    const next = { ...settings, paddleSensitivity: val };
+    setSettings(next);
+    saveSettings(next);
+    engine?.setSensitivity(val);
+  };
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center" style={{ background: 'rgba(60, 9, 108, 0.75)', backdropFilter: 'blur(4px)' }}>
-      <div className="flex flex-col items-center gap-6 p-10 rounded-3xl" style={{ background: 'rgba(255, 255, 255, 0.95)', minWidth: 320, boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}>
-        <Pause size={48} style={{ color: COLORS.primary }} />
+    <div className="absolute inset-0 flex items-center justify-center p-4 overflow-y-auto" style={{ background: 'rgba(60, 9, 108, 0.75)', backdropFilter: 'blur(4px)' }}>
+      <div className="flex flex-col items-center gap-4 p-8 rounded-3xl max-w-md w-full my-auto" style={{ background: 'rgba(255, 255, 255, 0.95)', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}>
+        <Pause size={40} style={{ color: COLORS.primary }} />
         <h2 className="text-3xl font-black" style={{ color: COLORS.primary, fontFamily: "'Fredoka One', sans-serif" }}>
           PAUSED
         </h2>
 
         {state && (
-          <div className="text-center space-y-1 mb-2">
+          <div className="text-center space-y-1 mb-1">
             <p className="text-sm font-semibold" style={{ color: COLORS.uiTextSecondary }}>
               Level {state.level}: {LEVEL_CONFIGS[state.level - 1]?.name}
             </p>
@@ -339,6 +347,10 @@ export function PauseScreen({ onResume, onRestart, onQuit, engine }: PauseScreen
             </div>
           </div>
         )}
+
+        <div className="w-full">
+          <SensitivityControl value={settings.paddleSensitivity} onChange={handleSensitivityChange} />
+        </div>
 
         <div className="flex flex-col gap-3 w-full">
           <ActionButton icon={<Play size={20} />} label="RESUME" color={COLORS.secondary} onClick={onResume} />
@@ -469,6 +481,77 @@ export function VictoryScreen({ score, onMenu }: VictoryScreenProps) {
 
 
 
+// ==================== SENSITIVITY CONTROL ====================
+
+export function SensitivityControl({
+  value,
+  onChange,
+}: {
+  value: number;
+  onChange: (val: number) => void;
+}) {
+  return (
+    <div
+      className="w-full px-5 py-4 rounded-2xl flex flex-col gap-3 transition-all"
+      style={{ background: 'rgba(255, 255, 255, 0.7)' }}
+    >
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3" style={{ color: COLORS.primary }}>
+          <Zap size={22} style={{ color: COLORS.accent }} />
+          <span className="font-bold text-sm md:text-base">Paddle Sensitivity</span>
+        </div>
+        <span
+          className="font-extrabold text-sm px-3 py-1 rounded-xl"
+          style={{ background: 'rgba(90, 24, 154, 0.15)', color: COLORS.primary }}
+        >
+          {value.toFixed(2)}x
+        </span>
+      </div>
+
+      <div className="flex items-center gap-3">
+        <span className="text-xs font-bold opacity-50" style={{ color: COLORS.primary }}>0.01</span>
+        <input
+          type="range"
+          min="0.01"
+          max="10.0"
+          step="0.05"
+          value={value}
+          onChange={(e) => onChange(parseFloat(e.target.value))}
+          className="w-full h-2 rounded-lg appearance-none cursor-pointer"
+          style={{ accentColor: COLORS.secondary }}
+        />
+        <span className="text-xs font-bold opacity-50" style={{ color: COLORS.primary }}>10.0</span>
+      </div>
+
+      <div className="flex items-center justify-between gap-1 mt-1">
+        {[
+          { label: 'Low', val: 0.5 },
+          { label: 'Normal', val: 1.5 },
+          { label: 'High', val: 3.0 },
+          { label: 'Ultra', val: 6.0 },
+          { label: 'Max', val: 10.0 },
+        ].map((preset) => {
+          const isActive = Math.abs(value - preset.val) < 0.1;
+          return (
+            <button
+              key={preset.label}
+              type="button"
+              onClick={() => onChange(preset.val)}
+              className="px-2.5 py-1 rounded-lg text-xs font-bold transition-all"
+              style={{
+                background: isActive ? COLORS.secondary : 'rgba(0,0,0,0.06)',
+                color: isActive ? '#FFFFFF' : COLORS.primary,
+              }}
+            >
+              {preset.label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 // ==================== SETTINGS SCREEN ====================
 
 interface SettingsScreenProps {
@@ -492,6 +575,12 @@ export function SettingsScreen({ onBack }: SettingsScreenProps) {
     gameAudio.updateSettings();
   };
 
+  const handleSensitivityChange = (val: number) => {
+    const next = { ...settings, paddleSensitivity: val };
+    setSettings(next);
+    saveSettings(next);
+  };
+
   const handleReset = () => {
     if (window.confirm('Are you sure? This will erase all progress and high scores.')) {
       resetAllData();
@@ -500,8 +589,8 @@ export function SettingsScreen({ onBack }: SettingsScreenProps) {
   };
 
   return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center p-6" style={{ background: `linear-gradient(135deg, ${COLORS.background} 0%, #B8F0BE 100%)` }}>
-      <div className="max-w-md w-full">
+    <div className="absolute inset-0 flex flex-col items-center justify-center p-6 overflow-y-auto" style={{ background: `linear-gradient(135deg, ${COLORS.background} 0%, #B8F0BE 100%)` }}>
+      <div className="max-w-md w-full my-auto">
         <button
           onClick={onBack}
           className="flex items-center gap-2 mb-6 px-4 py-2 rounded-xl transition-all hover:translate-x-[-4px]"
@@ -511,7 +600,7 @@ export function SettingsScreen({ onBack }: SettingsScreenProps) {
           <span className="font-semibold">Back</span>
         </button>
 
-        <div className="flex items-center gap-3 mb-8">
+        <div className="flex items-center gap-3 mb-6">
           <Settings size={32} style={{ color: COLORS.secondary }} />
           <h2 className="text-3xl font-black" style={{ color: COLORS.primary, fontFamily: "'Fredoka One', sans-serif" }}>
             Settings
@@ -519,6 +608,11 @@ export function SettingsScreen({ onBack }: SettingsScreenProps) {
         </div>
 
         <div className="space-y-4">
+          <SensitivityControl
+            value={settings.paddleSensitivity}
+            onChange={handleSensitivityChange}
+          />
+
           <SettingsToggle
             icon={settings.soundEnabled ? <Volume2 size={22} /> : <VolumeX size={22} />}
             label="Sound Effects"
@@ -534,8 +628,8 @@ export function SettingsScreen({ onBack }: SettingsScreenProps) {
           />
         </div>
 
-        <div className="mt-10 pt-6" style={{ borderTop: '1px solid rgba(0,0,0,0.1)' }}>
-          <p className="text-sm mb-4 font-semibold" style={{ color: COLORS.uiTextSecondary }}>Data Management</p>
+        <div className="mt-8 pt-6" style={{ borderTop: '1px solid rgba(0,0,0,0.1)' }}>
+          <p className="text-sm mb-3 font-semibold" style={{ color: COLORS.uiTextSecondary }}>Data Management</p>
           <button
             onClick={handleReset}
             className="w-full px-5 py-3 rounded-xl font-bold text-sm text-white transition-all hover:opacity-90"

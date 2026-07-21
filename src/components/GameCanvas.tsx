@@ -81,7 +81,8 @@ export function GameCanvas({ onScreenChange, onEngineReady, isPaused }: GameCanv
       const isLocked = document.pointerLockElement === canvas;
       if (isLocked) {
         const currentMouseX = engineRef.current.getState().mouseX;
-        engineRef.current.handleMouseMoveDirect(currentMouseX + e.movementX);
+        const sensitivity = engineRef.current.sensitivity;
+        engineRef.current.handleMouseMoveDirect(currentMouseX + e.movementX * sensitivity);
       } else {
         engineRef.current.handleMouseMoveDirect(clientToCanvasX(e.clientX, canvas));
       }

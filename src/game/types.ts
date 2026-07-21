@@ -199,9 +199,11 @@ export interface SaveData {
   hasSave: boolean;
   soundEnabled: boolean;
   musicEnabled: boolean;
+  paddleSensitivity?: number;
 }
 
 export interface GameSettings {
   soundEnabled: boolean;
   musicEnabled: boolean;
+  paddleSensitivity: number;
 }

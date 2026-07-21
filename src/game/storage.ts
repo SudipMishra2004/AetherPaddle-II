@@ -14,6 +14,7 @@ const DEFAULT_SAVE: SaveData = {
   hasSave: false,
   soundEnabled: true,
   musicEnabled: true,
+  paddleSensitivity: 1.5,
 };
 
 export function loadSaveData(): SaveData {
@@ -93,6 +94,7 @@ export function getSettings(): GameSettings {
   return {
     soundEnabled: data.soundEnabled,
     musicEnabled: data.musicEnabled,
+    paddleSensitivity: typeof data.paddleSensitivity === 'number' ? data.paddleSensitivity : 1.5,
   };
 }
 
@@ -100,6 +102,7 @@ export function saveSettings(settings: GameSettings): void {
   const data = loadSaveData();
   data.soundEnabled = settings.soundEnabled;
   data.musicEnabled = settings.musicEnabled;
+  data.paddleSensitivity = settings.paddleSensitivity;
   saveSaveData(data);
 }
 
