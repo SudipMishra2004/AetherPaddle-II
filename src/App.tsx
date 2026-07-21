@@ -25,13 +25,29 @@ function App() {
   const [engine, setEngine] = useState<GameEngine | null>(null);
   const [isPaused, setIsPaused] = useState(false);
   const [previousScreen, setPreviousScreen] = useState<GameScreen>('TITLE');
-  const containerRef = useRef<HTMLDivElement>(null);
+  // Whether the browser is currently in fullscreen mode
+  const [isFullscreenActive, setIsFullscreenActive] = useState(
+    typeof document !== 'undefined' ? isFullscreen() : false
+  );
   // Whether the mobile splash screen has been dismissed (user tapped to enter fullscreen)
   const [mobileReady, setMobileReady] = useState(false);
   // Portrait-mode detection for mobile
   const [isPortrait, setIsPortrait] = useState(
     typeof window !== 'undefined' && window.innerHeight > window.innerWidth
   );
+
+  // Listen to fullscreen changes to update button visibility dynamically
+  useEffect(() => {
+    const handleFsChange = () => {
+      setIsFullscreenActive(isFullscreen());
+    };
+    document.addEventListener('fullscreenchange', handleFsChange);
+    document.addEventListener('webkitfullscreenchange', handleFsChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFsChange);
+      document.removeEventListener('webkitfullscreenchange', handleFsChange);
+    };
+  }, []);
 
   // Engine ready callback
   const handleEngineReady = useCallback((newEngine: GameEngine) => {
@@ -234,12 +250,12 @@ function App() {
   };
 
   return (
-    <div className="w-screen h-screen flex items-center justify-center overflow-hidden" style={{ background: '#1a1a2e' }}>
+    <div className="w-full h-full flex items-center justify-center overflow-hidden" style={{ background: '#1a1a2e', minHeight: '100dvh', height: '100dvh' }}>
       <MenuStyles />
 
       <div
         ref={containerRef}
-        className="relative w-full h-full"
+        className="relative w-full h-full flex items-center justify-center"
       >
         {/* Game Canvas - always mounted for game loop */}
         <div className="absolute inset-0 flex items-center justify-center">
@@ -256,6 +272,36 @@ function App() {
             {renderOverlay()}
           </div>
         </div>
+
+        {/* ── Mobile persistent Fullscreen Button (touch devices, shown when not in browser fullscreen) ── */}
+        {isMobileDevice() && !isFullscreenActive && (
+          <button
+            onTouchStart={(e) => { e.preventDefault(); enterFullscreenLandscape(); }}
+            onClick={() => enterFullscreenLandscape()}
+            aria-label="Go Fullscreen"
+            style={{
+              position: 'absolute',
+              top: 10,
+              right: 12,
+              zIndex: 45,
+              background: 'linear-gradient(135deg, #FF9F00, #FF5400)',
+              border: '2px solid rgba(255, 255, 255, 0.9)',
+              borderRadius: 12,
+              padding: '7px 15px',
+              color: '#FFFFFF',
+              fontSize: 13,
+              fontWeight: 800,
+              letterSpacing: 1,
+              cursor: 'pointer',
+              boxShadow: '0 4px 16px rgba(255, 84, 0, 0.5)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+            }}
+          >
+            ⛶ FULLSCREEN
+          </button>
+        )}
 
         {/* ── Mobile pause button (touch devices, gameplay only) ── */}
         {currentScreen === 'PLAYING' && (

@@ -13,11 +13,13 @@ html {
   position: fixed;
   width: 100%;
   height: 100%;
+  height: 100dvh;
 }
 
 body {
   width: 100%;
   height: 100%;
+  height: 100dvh;
   overflow: hidden;
   /* Prevent iOS rubber-band scroll */
   overscroll-behavior: none;
@@ -25,15 +27,13 @@ body {
   font-family: 'Nunito', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* Respect iOS notch / safe areas */
-  padding: env(safe-area-inset-top) env(safe-area-inset-right)
-           env(safe-area-inset-bottom) env(safe-area-inset-left);
   background: #10002B;
 }
 
 #root {
   width: 100%;
   height: 100%;
+  height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -49,6 +49,8 @@ canvas {
   /* Preserve 1280:800 ratio inside whatever space is available */
   width: 100% !important;
   height: 100% !important;
+  max-width: 100vw !important;
+  max-height: 100dvh !important;
   object-fit: contain;
   display: block;
   /* Prevent tap highlight / context menu on long-press */
