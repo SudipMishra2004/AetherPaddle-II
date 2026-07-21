@@ -91,36 +91,51 @@ export function GameCanvas({ onScreenChange, onEngineReady, isPaused }: GameCanv
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  // ── Touch movement (mobile) ───────────────────────────────
+  // ── Touch movement (mobile relative drag) ─────────────────
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    // touchmove → move paddle to finger position
-    const handleTouchMove = (e: TouchEvent) => {
-      if (!engineRef.current || e.touches.length === 0) return;
-      e.preventDefault(); // stop page scroll while playing
-      const touch = e.touches[0];
-      engineRef.current.handleMouseMoveDirect(clientToCanvasX(touch.clientX, canvas), true);
-    };
+    let lastTouchX: number | null = null;
 
-    // touchstart → immediately snap paddle + handle tap-to-shoot lasers
     const handleTouchStart = (e: TouchEvent) => {
       if (!engineRef.current || e.touches.length === 0) return;
       e.preventDefault();
       const touch = e.touches[0];
-      engineRef.current.handleMouseMoveDirect(clientToCanvasX(touch.clientX, canvas), true);
+      lastTouchX = touch.clientX;
       // Treat a tap as a click (fires lasers if LaserPaddle is active)
       engineRef.current.handleClick();
     };
 
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!engineRef.current || e.touches.length === 0 || lastTouchX === null) return;
+      e.preventDefault(); // stop page scroll while playing
+      const touch = e.touches[0];
+      const deltaClientX = touch.clientX - lastTouchX;
+      lastTouchX = touch.clientX;
+
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = CANVAS_WIDTH / rect.width;
+      const deltaCanvasX = deltaClientX * scaleX;
+
+      engineRef.current.handleTouchDelta(deltaCanvasX);
+    };
+
+    const handleTouchEnd = () => {
+      lastTouchX = null;
+    };
+
     // passive: false so we can call preventDefault() inside the handler
-    canvas.addEventListener('touchmove',  handleTouchMove,  { passive: false });
-    canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+    canvas.addEventListener('touchstart',  handleTouchStart, { passive: false });
+    canvas.addEventListener('touchmove',   handleTouchMove,  { passive: false });
+    canvas.addEventListener('touchend',    handleTouchEnd,   { passive: false });
+    canvas.addEventListener('touchcancel', handleTouchEnd,   { passive: false });
 
     return () => {
-      canvas.removeEventListener('touchmove',  handleTouchMove);
-      canvas.removeEventListener('touchstart', handleTouchStart);
+      canvas.removeEventListener('touchstart',  handleTouchStart);
+      canvas.removeEventListener('touchmove',   handleTouchMove);
+      canvas.removeEventListener('touchend',    handleTouchEnd);
+      canvas.removeEventListener('touchcancel', handleTouchEnd);
     };
   }, []);
 

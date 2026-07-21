@@ -272,6 +272,17 @@ export class GameEngine {
     this.state.mouseX = (clientX - rect.left) * scaleX;
   }
 
+  handleTouchDelta(deltaX: number): void {
+    this.isTouchInput = true;
+    const sensitivity = 1.25; // Boosted responsiveness for touch drag
+    const halfWidth = this.state.paddle ? this.state.paddle.width / 2 : 60;
+    const minX = halfWidth;
+    const maxX = CANVAS_WIDTH - halfWidth;
+    // Calculate new position starting from current paddle position to avoid deadzones at screen edges
+    const currentX = this.state.paddle ? this.state.paddle.x : this.state.mouseX;
+    this.state.mouseX = Math.max(minX, Math.min(maxX, currentX + deltaX * sensitivity));
+  }
+
   handleMouseMoveDirect(mouseX: number, isTouch: boolean = false): void {
     this.isTouchInput = isTouch;
     this.state.mouseX = mouseX;
