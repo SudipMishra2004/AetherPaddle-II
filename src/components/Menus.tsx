@@ -50,11 +50,11 @@ export function TitleScreen({ onStartGame, onContinueGame, onOpenTutorial, onOpe
         ))}
       </div>
 
-      <div className="flex flex-col items-center justify-center max-w-lg w-full my-auto py-4 relative z-10">
+      <div className="flex flex-col items-center justify-center max-w-lg w-full my-auto py-2 sm:py-4 relative z-10">
         {/* Game Title */}
-        <div className="mb-2 sm:mb-4 text-center">
+        <div className="mb-1 sm:mb-3 text-center">
           <h1
-            className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight mb-1"
+            className="text-3xl sm:text-5xl md:text-7xl font-black tracking-tight mb-0.5"
             style={{
               fontFamily: "'Fredoka One', 'Nunito', sans-serif",
               color: COLORS.primary,
@@ -64,7 +64,7 @@ export function TitleScreen({ onStartGame, onContinueGame, onOpenTutorial, onOpe
           >
             AetherPaddle{' '}
             <span
-              className="text-3xl sm:text-5xl md:text-6xl font-bold inline-block"
+              className="text-2xl sm:text-4xl md:text-6xl font-bold inline-block"
               style={{
                 fontFamily: "'Fredoka One', sans-serif",
                 color: COLORS.accent,
@@ -76,17 +76,17 @@ export function TitleScreen({ onStartGame, onContinueGame, onOpenTutorial, onOpe
           </h1>
         </div>
 
-        <p className="text-xs sm:text-base mb-4 sm:mb-8 font-semibold text-center" style={{ color: COLORS.uiTextSecondary }}>
+        <p className="text-[11px] sm:text-base mb-3 sm:mb-6 font-semibold text-center" style={{ color: COLORS.uiTextSecondary }}>
           Physics-Based Arcade Challenge
         </p>
 
-        {/* Menu Buttons */}
-        <div className="flex flex-col gap-2.5 sm:gap-4 w-64 sm:w-72">
+        {/* Menu Buttons (2-column on mobile landscape, 1-column on tablet/desktop) */}
+        <div className="grid grid-cols-2 gap-2 w-full max-w-xs sm:flex sm:flex-col sm:w-72 sm:gap-3">
           {hasSave && (
             <MenuButton
-              icon={<Play size={20} />}
+              icon={<Play size={18} />}
               label="CONTINUE"
-              sublabel="Resume your journey"
+              sublabel="Resume progress"
               color={COLORS.secondary}
               hoverColor={COLORS.primary}
               onClick={onContinueGame}
@@ -97,7 +97,7 @@ export function TitleScreen({ onStartGame, onContinueGame, onOpenTutorial, onOpe
           )}
 
           <MenuButton
-            icon={<ChevronRight size={20} />}
+            icon={<ChevronRight size={18} />}
             label="NEW GAME"
             sublabel="Start fresh"
             color={COLORS.accent}
@@ -109,9 +109,9 @@ export function TitleScreen({ onStartGame, onContinueGame, onOpenTutorial, onOpe
           />
 
           <MenuButton
-            icon={<HelpCircle size={20} />}
+            icon={<HelpCircle size={18} />}
             label="HOW TO PLAY"
-            sublabel="Learn the mechanics"
+            sublabel="Tutorial"
             color={COLORS.uiTextSecondary}
             hoverColor={COLORS.primary}
             onClick={onOpenTutorial}
@@ -121,9 +121,9 @@ export function TitleScreen({ onStartGame, onContinueGame, onOpenTutorial, onOpe
           />
 
           <MenuButton
-            icon={<Settings size={20} />}
+            icon={<Settings size={18} />}
             label="SETTINGS"
-            sublabel="Audio & more"
+            sublabel="Audio & Sensi"
             color={COLORS.uiTextSecondary}
             hoverColor={COLORS.primary}
             onClick={onOpenSettings}
@@ -134,7 +134,7 @@ export function TitleScreen({ onStartGame, onContinueGame, onOpenTutorial, onOpe
         </div>
 
         {/* Version */}
-        <p className="mt-4 sm:mt-6 text-[11px] sm:text-xs opacity-50 text-center" style={{ color: COLORS.uiTextPrimary }}>
+        <p className="mt-3 sm:mt-6 text-[10px] sm:text-xs opacity-50 text-center" style={{ color: COLORS.uiTextPrimary }}>
           v2.0.0 — Touch or drag mouse to play
         </p>
       </div>
@@ -162,24 +162,24 @@ function MenuButton({ icon, label, sublabel, color, hoverColor, onClick, isHover
       onClick={onClick}
       onMouseEnter={onHover}
       onMouseLeave={onLeave}
-      className="flex items-center gap-3 sm:gap-4 px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-xl sm:rounded-2xl transition-all duration-200 w-full text-left"
+      className="flex items-center gap-2 sm:gap-4 px-3 sm:px-5 py-2 sm:py-3.5 rounded-xl sm:rounded-2xl transition-all duration-200 w-full text-left"
       style={{
-        background: isHovered ? hoverColor : 'rgba(255, 255, 255, 0.65)',
+        background: isHovered ? hoverColor : 'rgba(255, 255, 255, 0.7)',
         color: isHovered ? '#FFFFFF' : color,
-        transform: isHovered ? 'translateX(6px) scale(1.01)' : 'translateX(0) scale(1)',
+        transform: isHovered ? 'translateX(4px) scale(1.01)' : 'translateX(0) scale(1)',
         boxShadow: isHovered
-          ? `0 8px 24px ${hoverColor}40`
+          ? `0 6px 20px ${hoverColor}35`
           : '0 2px 8px rgba(0, 0, 0, 0.08)',
       }}
     >
       <span className="flex-shrink-0">{icon}</span>
       <div className="flex-1 min-w-0">
-        <div className="font-bold text-sm sm:text-base leading-tight">{label}</div>
+        <div className="font-bold text-xs sm:text-base leading-tight truncate">{label}</div>
         {sublabel && (
-          <div className="text-[10px] sm:text-xs opacity-60 mt-0.5">{sublabel}</div>
+          <div className="hidden sm:block text-[10px] sm:text-xs opacity-60 mt-0.5">{sublabel}</div>
         )}
       </div>
-      <ChevronRight size={16} className="flex-shrink-0 opacity-40" />
+      <ChevronRight size={14} className="flex-shrink-0 opacity-40 hidden sm:block" />
     </button>
   );
 }

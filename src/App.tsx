@@ -146,7 +146,23 @@ function App() {
   }, [engine, handleStartGame]);
 
 
+  // Handle browser back button / swipe back gesture gracefully
+  useEffect(() => {
+    const handlePopState = () => {
+      if (currentScreen === 'TUTORIAL' || currentScreen === 'SETTINGS') {
+        setCurrentScreen('TITLE');
+      } else if (currentScreen === 'PAUSED') {
+        setIsPaused(false);
+        engine?.resumeGame();
+        setCurrentScreen('PLAYING');
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [currentScreen, engine]);
+
   const handleOpenSettings = useCallback(() => {
+    try { window.history.pushState({ screen: 'SETTINGS' }, ''); } catch {}
     setPreviousScreen(currentScreen);
     setCurrentScreen('SETTINGS');
   }, [currentScreen]);
@@ -339,52 +355,31 @@ function App() {
           <div
             onClick={handleMobileSplashTap}
             onTouchStart={handleMobileSplashTap}
+            className="absolute inset-0 z-50 flex flex-col items-center justify-center p-3 sm:p-6 text-center cursor-pointer overflow-y-auto"
             style={{
-              position: 'absolute',
-              inset: 0,
-              zIndex: 50,
               background: 'linear-gradient(135deg,#10002B,#240046)',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 24,
-              padding: 32,
-              textAlign: 'center',
-              cursor: 'pointer',
             }}
           >
-            {/* Animated phone icon */}
-            <div style={{
-              fontSize: 72,
-              animation: 'rotateHint 2s ease-in-out infinite',
-            }}>📱</div>
-            <p style={{
-              color: '#E0AAFF',
-              fontSize: 22,
-              fontWeight: 800,
-              letterSpacing: 1,
-              lineHeight: 1.4,
-            }}>
-              Tap to Enter Fullscreen
-            </p>
-            <p style={{ color: 'rgba(224,170,255,0.6)', fontSize: 14, maxWidth: 300 }}>
-              AetherPaddle II plays best in fullscreen landscape mode.
-              Tap anywhere to start!
-            </p>
-            <div style={{
-              marginTop: 8,
-              padding: '12px 32px',
-              borderRadius: 16,
-              background: 'rgba(90,24,154,0.6)',
-              border: '2px solid rgba(224,170,255,0.4)',
-              color: '#E0AAFF',
-              fontSize: 16,
-              fontWeight: 700,
-              letterSpacing: 1.5,
-              animation: 'tapPulse 1.5s ease-in-out infinite',
-            }}>
-              ▶ TAP TO PLAY
+            <div className="flex flex-col items-center justify-center max-w-xs w-full my-auto gap-2 sm:gap-4">
+              {/* Animated phone icon */}
+              <div className="text-3xl sm:text-6xl" style={{ animation: 'rotateHint 2s ease-in-out infinite' }}>📱</div>
+              <p className="text-base sm:text-xl font-extrabold tracking-wide" style={{ color: '#E0AAFF' }}>
+                Tap to Enter Fullscreen
+              </p>
+              <p className="text-xs sm:text-sm" style={{ color: 'rgba(224,170,255,0.6)' }}>
+                AetherPaddle II plays best in fullscreen landscape mode. Tap anywhere to start!
+              </p>
+              <div
+                className="mt-1 sm:mt-2 px-6 sm:px-8 py-2 sm:py-3 rounded-2xl text-xs sm:text-base font-extrabold tracking-wider"
+                style={{
+                  background: 'rgba(90,24,154,0.7)',
+                  border: '2px solid rgba(224,170,255,0.5)',
+                  color: '#E0AAFF',
+                  animation: 'tapPulse 1.5s ease-in-out infinite',
+                }}
+              >
+                ▶ TAP TO PLAY
+              </div>
             </div>
           </div>
         )}
@@ -392,37 +387,20 @@ function App() {
         {/* ── Portrait-mode rotation prompt (shown after splash is dismissed but still portrait) ── */}
         {mobileReady && isPortrait && isMobileDevice() && (
           <div
+            className="absolute inset-0 z-50 flex flex-col items-center justify-center p-4 text-center overflow-y-auto"
             style={{
-              position: 'absolute',
-              inset: 0,
-              zIndex: 50,
               background: 'linear-gradient(135deg,#10002B,#240046)',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 24,
-              padding: 32,
-              textAlign: 'center',
             }}
           >
-            <div style={{
-              fontSize: 72,
-              animation: 'rotateHint 2s ease-in-out infinite',
-            }}>📱</div>
-            <p style={{
-              color: '#E0AAFF',
-              fontSize: 22,
-              fontWeight: 800,
-              letterSpacing: 1,
-              lineHeight: 1.4,
-            }}>
-              Rotate to Landscape
-            </p>
-            <p style={{ color: 'rgba(224,170,255,0.6)', fontSize: 14, maxWidth: 280 }}>
-              AetherPaddle II plays best in landscape mode.
-              Turn your device sideways to continue!
-            </p>
+            <div className="flex flex-col items-center justify-center max-w-xs w-full my-auto gap-3">
+              <div className="text-4xl sm:text-6xl" style={{ animation: 'rotateHint 2s ease-in-out infinite' }}>📱</div>
+              <p className="text-lg sm:text-xl font-extrabold tracking-wide" style={{ color: '#E0AAFF' }}>
+                Rotate to Landscape
+              </p>
+              <p className="text-xs sm:text-sm" style={{ color: 'rgba(224,170,255,0.6)' }}>
+                AetherPaddle II plays best in landscape mode. Turn your device sideways to continue!
+              </p>
+            </div>
           </div>
         )}
 
