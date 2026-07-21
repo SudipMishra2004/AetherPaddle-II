@@ -1,0 +1,11 @@
+{
+  "name": "AetherPaddle II",
+  "short_name": "AetherPaddle",
+  "description": "Physics-Based Arcade Challenge",
+  "start_url": "/",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#10002B",
+  "theme_color": "#10002B",
+  "icons": []
+}

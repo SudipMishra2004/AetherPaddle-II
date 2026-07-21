@@ -17,6 +17,7 @@ import { GameEngine } from './game/engine';
 import type { GameScreen } from './game/types';
 import { loadSaveData, clearGameProgress, loadGameProgress, saveGameProgress } from './game/storage';
 import { LIVES } from './game/constants';
+import { enterFullscreenLandscape, isMobileDevice, isFullscreen } from './game/fullscreen';
 import './App.css';
 
 function App() {
@@ -25,6 +26,8 @@ function App() {
   const [isPaused, setIsPaused] = useState(false);
   const [previousScreen, setPreviousScreen] = useState<GameScreen>('TITLE');
   const containerRef = useRef<HTMLDivElement>(null);
+  // Whether the mobile splash screen has been dismissed (user tapped to enter fullscreen)
+  const [mobileReady, setMobileReady] = useState(false);
   // Portrait-mode detection for mobile
   const [isPortrait, setIsPortrait] = useState(
     typeof window !== 'undefined' && window.innerHeight > window.innerWidth
@@ -74,16 +77,39 @@ function App() {
     };
   }, []);
 
+  // Auto-dismiss mobile splash if already in fullscreen (e.g. PWA)
+  useEffect(() => {
+    if (!isMobileDevice()) {
+      setMobileReady(true);
+    } else if (isFullscreen()) {
+      setMobileReady(true);
+    }
+  }, []);
+
+  // Handle mobile splash tap - enter fullscreen & lock landscape
+  const handleMobileSplashTap = useCallback(async () => {
+    await enterFullscreenLandscape();
+    setMobileReady(true);
+  }, []);
+
   // ==================== MENU ACTIONS ====================
 
-  const handleStartGame = useCallback(() => {
+  const handleStartGame = useCallback(async () => {
+    // Ensure fullscreen on mobile when starting a game
+    if (isMobileDevice() && !isFullscreen()) {
+      await enterFullscreenLandscape();
+    }
     clearGameProgress();
     engine?.startGame(false);
     setCurrentScreen('PLAYING');
     setIsPaused(false);
   }, [engine]);
 
-  const handleContinueGame = useCallback(() => {
+  const handleContinueGame = useCallback(async () => {
+    // Ensure fullscreen on mobile when continuing a game
+    if (isMobileDevice() && !isFullscreen()) {
+      await enterFullscreenLandscape();
+    }
     const progress = loadGameProgress();
     if (progress) {
       engine?.startGame(true);
@@ -261,8 +287,63 @@ function App() {
           </button>
         )}
 
-        {/* ── Portrait-mode rotation prompt ── */}
-        {isPortrait && (
+        {/* ── Mobile splash: tap to enter fullscreen + lock landscape ── */}
+        {!mobileReady && isMobileDevice() && (
+          <div
+            onClick={handleMobileSplashTap}
+            onTouchStart={handleMobileSplashTap}
+            style={{
+              position: 'absolute',
+              inset: 0,
+              zIndex: 50,
+              background: 'linear-gradient(135deg,#10002B,#240046)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 24,
+              padding: 32,
+              textAlign: 'center',
+              cursor: 'pointer',
+            }}
+          >
+            {/* Animated phone icon */}
+            <div style={{
+              fontSize: 72,
+              animation: 'rotateHint 2s ease-in-out infinite',
+            }}>📱</div>
+            <p style={{
+              color: '#E0AAFF',
+              fontSize: 22,
+              fontWeight: 800,
+              letterSpacing: 1,
+              lineHeight: 1.4,
+            }}>
+              Tap to Enter Fullscreen
+            </p>
+            <p style={{ color: 'rgba(224,170,255,0.6)', fontSize: 14, maxWidth: 300 }}>
+              AetherPaddle II plays best in fullscreen landscape mode.
+              Tap anywhere to start!
+            </p>
+            <div style={{
+              marginTop: 8,
+              padding: '12px 32px',
+              borderRadius: 16,
+              background: 'rgba(90,24,154,0.6)',
+              border: '2px solid rgba(224,170,255,0.4)',
+              color: '#E0AAFF',
+              fontSize: 16,
+              fontWeight: 700,
+              letterSpacing: 1.5,
+              animation: 'tapPulse 1.5s ease-in-out infinite',
+            }}>
+              ▶ TAP TO PLAY
+            </div>
+          </div>
+        )}
+
+        {/* ── Portrait-mode rotation prompt (shown after splash is dismissed but still portrait) ── */}
+        {mobileReady && isPortrait && isMobileDevice() && (
           <div
             style={{
               position: 'absolute',
@@ -278,7 +359,6 @@ function App() {
               textAlign: 'center',
             }}
           >
-            {/* Animated phone icon */}
             <div style={{
               fontSize: 72,
               animation: 'rotateHint 2s ease-in-out infinite',
@@ -294,22 +374,27 @@ function App() {
             </p>
             <p style={{ color: 'rgba(224,170,255,0.6)', fontSize: 14, maxWidth: 280 }}>
               AetherPaddle II plays best in landscape mode.
-              Turn your device sideways to start playing!
+              Turn your device sideways to continue!
             </p>
-            <style>{`
-              @keyframes rotateHint {
-                0%   { transform: rotate(0deg); }
-                30%  { transform: rotate(-90deg); }
-                60%  { transform: rotate(-90deg); }
-                90%  { transform: rotate(0deg); }
-                100% { transform: rotate(0deg); }
-              }
-              @media (pointer: coarse) {
-                .mobile-pause-btn { display: block !important; }
-              }
-            `}</style>
           </div>
         )}
+
+        <style>{`
+          @keyframes rotateHint {
+            0%   { transform: rotate(0deg); }
+            30%  { transform: rotate(-90deg); }
+            60%  { transform: rotate(-90deg); }
+            90%  { transform: rotate(0deg); }
+            100% { transform: rotate(0deg); }
+          }
+          @keyframes tapPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.85; }
+          }
+          @media (pointer: coarse) {
+            .mobile-pause-btn { display: block !important; }
+          }
+        `}</style>
       </div>
     </div>
   );
