@@ -101,7 +101,7 @@ export function GameCanvas({ onScreenChange, onEngineReady, isPaused }: GameCanv
       if (!engineRef.current || e.touches.length === 0) return;
       e.preventDefault(); // stop page scroll while playing
       const touch = e.touches[0];
-      engineRef.current.handleMouseMoveDirect(clientToCanvasX(touch.clientX, canvas));
+      engineRef.current.handleMouseMoveDirect(clientToCanvasX(touch.clientX, canvas), true);
     };
 
     // touchstart → immediately snap paddle + handle tap-to-shoot lasers
@@ -109,7 +109,7 @@ export function GameCanvas({ onScreenChange, onEngineReady, isPaused }: GameCanv
       if (!engineRef.current || e.touches.length === 0) return;
       e.preventDefault();
       const touch = e.touches[0];
-      engineRef.current.handleMouseMoveDirect(clientToCanvasX(touch.clientX, canvas));
+      engineRef.current.handleMouseMoveDirect(clientToCanvasX(touch.clientX, canvas), true);
       // Treat a tap as a click (fires lasers if LaserPaddle is active)
       engineRef.current.handleClick();
     };

@@ -35,6 +35,7 @@ export class GameEngine {
   private bgImage: HTMLImageElement | null = null;
   private onStateChange: (() => void) | null = null;
   private questTargetBrick: Brick | null = null;
+  private isTouchInput: boolean = false;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -271,7 +272,8 @@ export class GameEngine {
     this.state.mouseX = (clientX - rect.left) * scaleX;
   }
 
-  handleMouseMoveDirect(mouseX: number): void {
+  handleMouseMoveDirect(mouseX: number, isTouch: boolean = false): void {
+    this.isTouchInput = isTouch;
     this.state.mouseX = mouseX;
   }
 
@@ -349,7 +351,7 @@ export class GameEngine {
     this.state.paddle.width += (targetWidth - this.state.paddle.width) * 0.15;
 
     // Update paddle
-    updatePaddlePosition(this.state.paddle, this.state.mouseX);
+    updatePaddlePosition(this.state.paddle, this.state.mouseX, this.isTouchInput);
 
     // Update buff timers
     this.updateBuffs();

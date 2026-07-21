@@ -245,10 +245,12 @@ export function updateBallPosition(
 }
 
 // Update paddle position (smooth follow)
-export function updatePaddlePosition(paddle: Paddle, targetX: number): void {
+export function updatePaddlePosition(paddle: Paddle, targetX: number, isTouch: boolean = false): void {
   paddle.targetX = targetX;
   const dx = paddle.targetX - paddle.x;
-  paddle.x += dx * PADDLE.speed;
+  // Touch input gets higher lerp speed (0.75) for smooth, lag-free mobile control
+  const lerpSpeed = isTouch ? 0.75 : PADDLE.speed;
+  paddle.x += dx * lerpSpeed;
 
   // Clamp to canvas bounds
   const halfWidth = paddle.width / 2;

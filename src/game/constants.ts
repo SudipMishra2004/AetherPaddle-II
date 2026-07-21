@@ -47,7 +47,7 @@ export const PADDLE = {
   width: 120,
   height: 16,
   y: CANVAS_HEIGHT - 40,
-  speed: 0.25, // lerp factor for smooth following
+  speed: 0.45, // lerp factor for smooth following
   squashDuration: 8, // frames
 };
 
