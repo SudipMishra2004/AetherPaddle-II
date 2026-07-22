@@ -14,8 +14,8 @@ import {
 } from './constants';
 import { LEVEL_CONFIGS, generateLayout, getDifficultyMultiplier } from './levels';
 import {
-  ballPaddleCollision, ballBrickCollision, ballWallCollision,
-  ballOutOfBounds, powerUpPaddleCollision, updateBallPosition,
+  ballPaddleCollision, ballBricksCollision, ballWallCollision,
+  ballOutOfBounds, powerUpPaddleCollision,
   updatePaddlePosition, updatePowerUpPosition, createBall,
 } from './physics';
 import {
@@ -458,62 +458,97 @@ export class GameEngine {
     const magnetismActive = this.state.activeBuffs.some(b => b.type === 'Magnetism');
 
     for (const ball of this.state.balls) {
-      updateBallPosition(ball, this.state.paddle.x, magnetismActive, this.state.timeWarpActive);
+      if (this.state.timeWarpActive || ball.frozen) continue;
 
-      // Wall collisions
-      if (ballWallCollision(ball)) {
-        gameAudio.playSfx('bounce');
-      }
+      // Sub-step movement to prevent ball tunneling through bricks or wedging into seams
+      const speed = Math.hypot(ball.vx, ball.vy);
+      const subSteps = Math.max(1, Math.ceil(speed / 3.5));
+      const stepVx = ball.vx / subSteps;
+      const stepVy = ball.vy / subSteps;
 
-      // Paddle collision
-      if (ballPaddleCollision(ball, this.state.paddle)) {
-        this.state.paddle.squashScale = 0.7;
-        this.spawnSparkParticles(ball.x, ball.y, '#FFFFFF', 6);
-        this.state.combo = 0; // Reset combo on paddle hit
-        gameAudio.playSfx('bounce');
-      }
-
-      // Brick collisions
-      for (const brick of this.state.bricks) {
-        const result = ballBrickCollision(ball, brick);
-        if (result.collided) {
-          if (brick.type === 'indestructible') {
-            this.spawnDebrisParticles(brick.x + brick.width / 2, brick.y + brick.height / 2, '#888888', 3);
-            gameAudio.playSfx('bounce');
-            break;
-          }
-
-          // Handle quest target hit
-          if (this.state.quest.active && this.questTargetBrick && brick.id === this.questTargetBrick.id) {
-            this.state.quest.hitsCurrent++;
-            if (this.state.quest.hitsCurrent >= this.state.quest.hitsRequired) {
-              this.completeQuest();
-            }
-          }
-
-          // Scoring
-          if (result.destroyed) {
-            this.handleBrickDestroyed(brick);
-          } else {
-            // Multi-hit brick damaged
-            this.state.score += Math.floor(SCORING.multiHitFirst * this.state.comboMultiplier);
-            this.state.combo++;
-            this.spawnDebrisParticles(brick.x + brick.width / 2, brick.y + brick.height / 2, brick.color, 4);
-            gameAudio.playSfx('brickHit');
-          }
-
-          this.state.comboMultiplier = 1.0 + this.state.combo * SCORING.comboMultiplier;
-
-          // Blast Radius explosion
-          const blastActive = this.state.activeBuffs.some(b => b.type === 'BlastRadius');
-          if (blastActive) {
-            this.triggerBlastRadiusExplosion(brick.x + brick.width / 2, brick.y + brick.height / 2, brick.id);
-          }
-
-          break; // Prevent hitting multiple bricks in one frame
+      // Apply magnetism force once per frame if active
+      if (magnetismActive && ball.vy > 0) {
+        const dx = this.state.paddle.x - ball.x;
+        const dist = Math.abs(dx);
+        if (dist < 200) {
+          const force = (1 - dist / 200) * 0.3;
+          ball.vx += (dx > 0 ? 1 : -1) * force;
         }
       }
 
+      for (let step = 0; step < subSteps; step++) {
+        ball.x += stepVx;
+        ball.y += stepVy;
+
+        // Wall collisions
+        if (ballWallCollision(ball)) {
+          gameAudio.playSfx('bounce');
+        }
+
+        // Paddle collision
+        if (ballPaddleCollision(ball, this.state.paddle)) {
+          this.state.paddle.squashScale = 0.7;
+          this.spawnSparkParticles(ball.x, ball.y, '#FFFFFF', 6);
+          this.state.combo = 0; // Reset combo on paddle hit
+          gameAudio.playSfx('bounce');
+        }
+
+        // Brick collisions for this sub-step
+        const result = ballBricksCollision(ball, this.state.bricks);
+        if (result.collided) {
+          let soundPlayed = false;
+
+          for (const hit of result.hitBricks) {
+            const brick = hit.brick;
+
+            if (brick.type === 'indestructible') {
+              this.spawnDebrisParticles(brick.x + brick.width / 2, brick.y + brick.height / 2, '#888888', 3);
+              if (!soundPlayed) {
+                gameAudio.playSfx('bounce');
+                soundPlayed = true;
+              }
+              continue;
+            }
+
+            // Handle quest target hit
+            if (this.state.quest.active && this.questTargetBrick && brick.id === this.questTargetBrick.id) {
+              this.state.quest.hitsCurrent++;
+              if (this.state.quest.hitsCurrent >= this.state.quest.hitsRequired) {
+                this.completeQuest();
+              }
+            }
+
+            // Scoring & damage
+            if (hit.destroyed) {
+              this.handleBrickDestroyed(brick);
+              soundPlayed = true;
+            } else {
+              // Multi-hit brick damaged
+              this.state.score += Math.floor(SCORING.multiHitFirst * this.state.comboMultiplier);
+              this.state.combo++;
+              this.spawnDebrisParticles(brick.x + brick.width / 2, brick.y + brick.height / 2, brick.color, 4);
+              if (!soundPlayed) {
+                gameAudio.playSfx('brickHit');
+                soundPlayed = true;
+              }
+            }
+
+            this.state.comboMultiplier = 1.0 + this.state.combo * SCORING.comboMultiplier;
+
+            // Blast Radius explosion
+            const blastActive = this.state.activeBuffs.some(b => b.type === 'BlastRadius');
+            if (blastActive) {
+              this.triggerBlastRadiusExplosion(brick.x + brick.width / 2, brick.y + brick.height / 2, brick.id);
+            }
+          }
+        }
+      }
+
+      // Update ball trail once per frame
+      ball.trail.unshift({ x: ball.x, y: ball.y });
+      if (ball.trail.length > 8) {
+        ball.trail.pop();
+      }
     }
 
     // Check out of bounds balls

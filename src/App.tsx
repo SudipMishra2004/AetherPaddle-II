@@ -112,8 +112,8 @@ function App() {
   // ==================== MENU ACTIONS ====================
 
   const handleStartGame = useCallback(async () => {
-    // Ensure fullscreen on mobile when starting a game
-    if (isMobileDevice() && !isFullscreen()) {
+    // Automatically trigger fullscreen mode when starting a game (PC and mobile)
+    if (!isFullscreen()) {
       await enterFullscreenLandscape();
     }
     clearGameProgress();
@@ -123,8 +123,8 @@ function App() {
   }, [engine]);
 
   const handleContinueGame = useCallback(async () => {
-    // Ensure fullscreen on mobile when continuing a game
-    if (isMobileDevice() && !isFullscreen()) {
+    // Automatically trigger fullscreen mode when continuing a game (PC and mobile)
+    if (!isFullscreen()) {
       await enterFullscreenLandscape();
     }
     const progress = loadGameProgress();
@@ -289,6 +289,8 @@ function App() {
             {renderOverlay()}
           </div>
         </div>
+
+
 
         {/* ── Mobile persistent Fullscreen Button (touch devices, shown when not in browser fullscreen) ── */}
         {isMobileDevice() && !isFullscreenActive && (

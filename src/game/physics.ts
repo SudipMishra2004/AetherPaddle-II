@@ -102,55 +102,121 @@ export function ballPaddleCollision(
   return true;
 }
 
-// Ball vs Brick collision
+export interface BrickHitInfo {
+  brick: Brick;
+  destroyed: boolean;
+}
+
+export interface BallBricksCollisionResult {
+  collided: boolean;
+  hitBricks: BrickHitInfo[];
+  hasIndestructible: boolean;
+}
+
+// Ball vs Bricks multi-collision detection (seam-safe and tunneling-proof)
+export function ballBricksCollision(
+  ball: Ball,
+  bricks: Brick[]
+): BallBricksCollisionResult {
+  const overlapping: { brick: Brick; overlapX: number; overlapY: number; diffX: number; diffY: number }[] = [];
+
+  for (const brick of bricks) {
+    const halfBW = brick.width / 2;
+    const halfBH = brick.height / 2;
+    const brickCenterX = brick.x + halfBW;
+    const brickCenterY = brick.y + halfBH;
+
+    const diffX = ball.x - brickCenterX;
+    const diffY = ball.y - brickCenterY;
+
+    const overlapX = (ball.radius + halfBW) - Math.abs(diffX);
+    const overlapY = (ball.radius + halfBH) - Math.abs(diffY);
+
+    if (overlapX > 0 && overlapY > 0) {
+      overlapping.push({
+        brick,
+        overlapX,
+        overlapY,
+        diffX,
+        diffY,
+      });
+    }
+  }
+
+  if (overlapping.length === 0) {
+    return { collided: false, hitBricks: [], hasIndestructible: false };
+  }
+
+  // Find minimum overlaps to determine primary collision plane
+  let minOverlapX = Infinity;
+  let minOverlapY = Infinity;
+
+  for (const item of overlapping) {
+    if (item.overlapX < minOverlapX) minOverlapX = item.overlapX;
+    if (item.overlapY < minOverlapY) minOverlapY = item.overlapY;
+  }
+
+  // Vertical collision (top or bottom edge) if Y overlap is smaller than X overlap
+  const isVerticalHit = minOverlapY <= minOverlapX;
+
+  if (isVerticalHit) {
+    // Reflect vertical velocity
+    ball.vy = ball.vy > 0 ? -Math.abs(ball.vy) : Math.abs(ball.vy);
+
+    // Push ball outside vertically (no horizontal displacement to prevent wedging into adjacent bricks)
+    if (ball.vy < 0) {
+      const topY = Math.min(...overlapping.map(o => o.brick.y));
+      ball.y = topY - ball.radius - 1;
+    } else {
+      const bottomY = Math.max(...overlapping.map(o => o.brick.y + o.brick.height));
+      ball.y = bottomY + ball.radius + 1;
+    }
+  } else {
+    // Reflect horizontal velocity
+    ball.vx = ball.vx > 0 ? -Math.abs(ball.vx) : Math.abs(ball.vx);
+
+    // Push ball outside horizontally
+    if (ball.vx < 0) {
+      const leftX = Math.min(...overlapping.map(o => o.brick.x));
+      ball.x = leftX - ball.radius - 1;
+    } else {
+      const rightX = Math.max(...overlapping.map(o => o.brick.x + o.brick.width));
+      ball.x = rightX + ball.radius + 1;
+    }
+  }
+
+  // Damage & flash timer for all hit bricks
+  const hitBricks: BrickHitInfo[] = [];
+  let hasIndestructible = false;
+
+  for (const item of overlapping) {
+    const brick = item.brick;
+    brick.flashTimer = 6;
+
+    if (brick.type === 'indestructible') {
+      hasIndestructible = true;
+      hitBricks.push({ brick, destroyed: false });
+    } else {
+      brick.hp -= 1;
+      const destroyed = brick.hp <= 0;
+      hitBricks.push({ brick, destroyed });
+    }
+  }
+
+  return { collided: true, hitBricks, hasIndestructible };
+}
+
+// Single-brick fallback helper
 export function ballBrickCollision(
   ball: Ball,
   brick: Brick
 ): { collided: boolean; destroyed: boolean; fromSide: boolean } {
-  const collision = circleRectCollision(
-    ball.x, ball.y, ball.radius,
-    brick.x, brick.y, brick.width, brick.height
-  );
-
-  if (!collision.collided) {
+  const result = ballBricksCollision(ball, [brick]);
+  if (!result.collided || result.hitBricks.length === 0) {
     return { collided: false, destroyed: false, fromSide: false };
   }
-
-  // Reflect ball based on collision normal
-  // Determine if hit was more horizontal or vertical
-  if (Math.abs(collision.nx) > Math.abs(collision.ny)) {
-    ball.vx = -ball.vx;
-  } else {
-    ball.vy = -ball.vy;
-  }
-
-  // Push ball fully outside the brick with generous margin to prevent tunnelling/re-entry
-  const closestX = Math.max(brick.x, Math.min(ball.x, brick.x + brick.width));
-  const closestY = Math.max(brick.y, Math.min(ball.y, brick.y + brick.height));
-  const distToSurface = Math.sqrt((ball.x - closestX) ** 2 + (ball.y - closestY) ** 2);
-  const overlap = ball.radius - distToSurface;
-  
-  if (overlap > 0) {
-    // Use a margin of 2px so the ball is clearly outside on the next frame
-    ball.x += collision.nx * (overlap + 2);
-    ball.y += collision.ny * (overlap + 2);
-  }
-
-  // Damage brick
-  if (brick.type === 'indestructible') {
-    // Flash but no damage
-    brick.flashTimer = 6;
-    return { collided: true, destroyed: false, fromSide: Math.abs(collision.nx) > Math.abs(collision.ny) };
-  }
-
-  brick.hp -= 1;
-  brick.flashTimer = 6;
-
-  if (brick.hp <= 0) {
-    return { collided: true, destroyed: true, fromSide: Math.abs(collision.nx) > Math.abs(collision.ny) };
-  }
-
-  return { collided: true, destroyed: false, fromSide: Math.abs(collision.nx) > Math.abs(collision.ny) };
+  const hit = result.hitBricks[0];
+  return { collided: true, destroyed: hit.destroyed, fromSide: false };
 }
 
 // Ball vs Wall collision

@@ -91,3 +91,23 @@ button:active {
   }
 }
 
+/* Keyboard controls guide bar for PC desktop only */
+@media screen and (min-width: 640px) {
+  .pc-controls-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 8px 24px;
+    border-radius: 20px;
+    background: rgba(90, 24, 154, 0.45);
+    border: 1.5px solid rgba(224, 170, 255, 0.3);
+    color: rgba(224, 170, 255, 0.95);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(8px);
+  }
+}
+

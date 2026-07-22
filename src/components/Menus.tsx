@@ -31,7 +31,7 @@ export function TitleScreen({ onStartGame, onContinueGame, onOpenTutorial, onOpe
 
   return (
     <div
-      className="absolute inset-0 overflow-hidden flex flex-col items-center justify-center"
+      className="absolute inset-0 overflow-hidden flex flex-col items-center justify-center p-1 sm:p-4"
       style={{ background: `linear-gradient(135deg, ${COLORS.background} 0%, #B8F0BE 100%)` }}
     >
       {/* Animated background particles */}
@@ -53,7 +53,10 @@ export function TitleScreen({ onStartGame, onContinueGame, onOpenTutorial, onOpe
         ))}
       </div>
 
-      <div className="relative z-10 w-full max-w-sm px-3 flex flex-col items-center" style={{ gap: 'clamp(6px, 1.5vh, 16px)' }}>
+      <div
+        className="relative z-10 w-full max-w-[300px] sm:max-w-md px-2 sm:px-8 flex flex-col items-center justify-center my-auto overflow-y-auto max-h-[100dvh]"
+        style={{ gap: 'clamp(4px, 2vh, 28px)' }}
+      >
         {/* Game Title */}
         <div className="text-center">
           <h1
@@ -61,8 +64,8 @@ export function TitleScreen({ onStartGame, onContinueGame, onOpenTutorial, onOpe
             style={{
               fontFamily: "'Fredoka One', 'Nunito', sans-serif",
               color: COLORS.primary,
-              fontSize: 'clamp(1.5rem, 6.5vw, 3.5rem)',
-              textShadow: `0 3px 0 ${COLORS.secondary}, 0 6px 16px rgba(90,24,154,0.25)`,
+              fontSize: 'clamp(1.35rem, 8vh, 4.2rem)',
+              textShadow: `0 3px 0 ${COLORS.secondary}, 0 8px 24px rgba(90,24,154,0.25)`,
               animation: 'titlePulse 3s ease-in-out infinite',
             }}
           >
@@ -71,30 +74,30 @@ export function TitleScreen({ onStartGame, onContinueGame, onOpenTutorial, onOpe
               style={{
                 fontFamily: "'Fredoka One', sans-serif",
                 color: COLORS.accent,
-                fontSize: 'clamp(1.1rem, 5vw, 2.8rem)',
-                textShadow: `0 2px 0 rgba(255,158,0,0.3)`,
+                fontSize: 'clamp(1.05rem, 6vh, 3.2rem)',
+                textShadow: `0 2px 0 rgba(255,158,0,0.35)`,
               }}
             >
               II
             </span>
           </h1>
           <p
-            className="font-semibold"
+            className="font-semibold sm:tracking-widest uppercase opacity-90"
             style={{
               color: COLORS.uiTextSecondary,
-              fontSize: 'clamp(0.55rem, 1.8vw, 0.85rem)',
-              marginTop: 2,
+              fontSize: 'clamp(0.58rem, 2.2vh, 1rem)',
+              marginTop: 'clamp(2px, 0.6vh, 8px)',
             }}
           >
             Physics-Based Arcade Challenge
           </p>
         </div>
 
-        {/* Menu Buttons — always 2 columns */}
-        <div className="grid grid-cols-2 w-full" style={{ gap: 'clamp(5px, 1.2vw, 10px)' }}>
+        {/* Menu Buttons â€” 2 columns on mobile, 1 column spacious on desktop */}
+        <div className="grid grid-cols-2 sm:grid-cols-1 w-full" style={{ gap: 'clamp(4px, 1.5vh, 16px)' }}>
           {hasSave && (
             <MenuButton
-              icon={<Play size={14} />}
+              icon={<Play className="w-3.5 h-3.5 sm:w-5 sm:h-5" />}
               label="CONTINUE"
               color={COLORS.secondary}
               hoverColor={COLORS.primary}
@@ -106,7 +109,7 @@ export function TitleScreen({ onStartGame, onContinueGame, onOpenTutorial, onOpe
           )}
 
           <MenuButton
-            icon={<ChevronRight size={14} />}
+            icon={<ChevronRight className="w-3.5 h-3.5 sm:w-5 sm:h-5" />}
             label="NEW GAME"
             color={COLORS.accent}
             hoverColor="#E8890A"
@@ -117,7 +120,7 @@ export function TitleScreen({ onStartGame, onContinueGame, onOpenTutorial, onOpe
           />
 
           <MenuButton
-            icon={<HelpCircle size={14} />}
+            icon={<HelpCircle className="w-3.5 h-3.5 sm:w-5 sm:h-5" />}
             label="HOW TO PLAY"
             color={COLORS.uiTextSecondary}
             hoverColor={COLORS.primary}
@@ -128,7 +131,7 @@ export function TitleScreen({ onStartGame, onContinueGame, onOpenTutorial, onOpe
           />
 
           <MenuButton
-            icon={<Settings size={14} />}
+            icon={<Settings className="w-3.5 h-3.5 sm:w-5 sm:h-5" />}
             label="SETTINGS"
             color={COLORS.uiTextSecondary}
             hoverColor={COLORS.primary}
@@ -140,10 +143,10 @@ export function TitleScreen({ onStartGame, onContinueGame, onOpenTutorial, onOpe
         </div>
 
         <p
-          className="opacity-40 text-center"
-          style={{ color: COLORS.uiTextPrimary, fontSize: '0.55rem' }}
+          className="opacity-45 text-center tracking-wider uppercase font-semibold"
+          style={{ color: COLORS.uiTextPrimary, fontSize: 'clamp(0.5rem, 1.6vh, 0.75rem)' }}
         >
-          v2.0.0 · Touch & drag to play
+          v2.0.0 â€¢ Touch & drag / Mouse to play
         </p>
       </div>
     </div>
@@ -169,17 +172,17 @@ function MenuButton({ icon, label, color, hoverColor, onClick, isHovered, onHove
       onClick={onClick}
       onMouseEnter={onHover}
       onMouseLeave={onLeave}
-      className="flex items-center justify-center gap-1.5 w-full rounded-xl font-bold transition-all duration-150 active:scale-95"
+      className="flex items-center justify-center gap-1 sm:gap-3.5 w-full rounded-lg sm:rounded-2xl font-black transition-all duration-200 active:scale-95 hover:shadow-xl hover:-translate-y-1"
       style={{
-        padding: 'clamp(5px, 1.3vh, 11px) 6px',
-        background: isHovered ? hoverColor : 'rgba(255,255,255,0.78)',
+        background: isHovered ? hoverColor : 'rgba(255,255,255,0.85)',
         color: isHovered ? '#FFFFFF' : color,
-        boxShadow: isHovered ? `0 4px 14px ${hoverColor}40` : '0 2px 6px rgba(0,0,0,0.08)',
-        fontSize: 'clamp(0.58rem, 1.8vw, 0.78rem)',
+        boxShadow: isHovered ? `0 8px 25px ${hoverColor}45` : '0 4px 12px rgba(0,0,0,0.06)',
+        padding: 'clamp(5px, 1.5vh, 16px) 8px',
+        fontSize: 'clamp(0.64rem, 2.4vh, 1rem)',
       }}
     >
       <span className="flex-shrink-0">{icon}</span>
-      <span className="font-black tracking-wide truncate">{label}</span>
+      <span className="tracking-wider uppercase truncate">{label}</span>
     </button>
   );
 }
@@ -196,22 +199,21 @@ export function TutorialScreen({ onBack }: TutorialScreenProps) {
       className="absolute inset-0 overflow-hidden flex flex-col"
       style={{ background: `linear-gradient(135deg, ${COLORS.background} 0%, #B8F0BE 100%)` }}
     >
-      {/* Fixed header — always visible */}
-      <div className="flex-shrink-0 flex items-center gap-2 px-2.5 pt-1.5 pb-1">
+      {/* Fixed header */}
+      <div className="flex-shrink-0 flex items-center gap-2 sm:gap-5 px-2.5 sm:px-10 pt-2 sm:pt-8 pb-1 sm:pb-5 max-w-4xl w-full mx-auto">
         <button
           onClick={onBack}
-          className="flex items-center gap-1 px-2.5 py-1 rounded-lg transition-all active:scale-95"
-          style={{ background: 'rgba(255,255,255,0.8)', color: COLORS.primary, fontSize: '0.75rem', fontWeight: 700 }}
+          className="flex items-center gap-1 sm:gap-2 px-2.5 sm:px-5 py-1 sm:py-2.5 rounded-lg sm:rounded-2xl transition-all active:scale-95 hover:bg-white shadow-sm hover:shadow-md"
+          style={{ background: 'rgba(255,255,255,0.85)', color: COLORS.primary, fontWeight: 800 }}
         >
-          <ArrowLeft size={14} />
-          Back
+          <ArrowLeft className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
+          <span className="text-xs sm:text-sm tracking-wide">Back</span>
         </button>
         <h2
-          className="font-black"
+          className="font-black text-sm sm:text-3xl"
           style={{
             color: COLORS.primary,
             fontFamily: "'Fredoka One', sans-serif",
-            fontSize: 'clamp(0.9rem, 3vw, 1.6rem)',
           }}
         >
           How to Play
@@ -219,39 +221,39 @@ export function TutorialScreen({ onBack }: TutorialScreenProps) {
       </div>
 
       {/* Scrollable body */}
-      <div className="flex-1 overflow-y-auto px-2.5 pb-2">
-        <div className="grid grid-cols-2 gap-1.5 mb-1.5">
+      <div className="flex-1 overflow-y-auto px-2.5 sm:px-10 pb-3 sm:pb-10 max-w-4xl w-full mx-auto space-y-2 sm:space-y-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-1.5 sm:gap-5">
           <TutorialCard
-            icon={<Zap size={14} />}
+            icon={<Zap className="w-3.5 h-3.5 sm:w-6 sm:h-6" />}
             title="Control"
-            description="Touch & drag left/right to move the paddle."
+            description="Touch & drag or move mouse left/right to position paddle."
             color={COLORS.accent}
           />
           <TutorialCard
-            icon={<Star size={14} />}
+            icon={<Star className="w-3.5 h-3.5 sm:w-6 sm:h-6" />}
             title="Bricks"
             description="Hit bricks with the ball. Multi-hit bricks show HP."
             color={COLORS.secondary}
           />
           <TutorialCard
-            icon={<Shield size={14} />}
+            icon={<Shield className="w-3.5 h-3.5 sm:w-6 sm:h-6" />}
             title="Power-Ups"
             description="Catch dropped power-ups for temporary buffs."
             color={COLORS.shield}
           />
           <TutorialCard
-            icon={<Trophy size={14} />}
+            icon={<Trophy className="w-3.5 h-3.5 sm:w-6 sm:h-6" />}
             title="Advance"
             description="Clear all bricks to advance to the next level."
             color="#FF006E"
           />
         </div>
 
-        <div className="p-2 rounded-xl" style={{ background: 'rgba(90,24,154,0.08)' }}>
-          <h3 className="font-bold mb-1.5" style={{ color: COLORS.primary, fontSize: 'clamp(0.65rem, 2vw, 0.85rem)' }}>
+        <div className="p-2 sm:p-8 rounded-xl sm:rounded-3xl shadow-sm" style={{ background: 'rgba(90,24,154,0.08)' }}>
+          <h3 className="font-bold mb-1.5 sm:mb-5 text-xs sm:text-xl tracking-wide" style={{ color: COLORS.primary }}>
             Power-Up Guide
           </h3>
-          <div className="grid grid-cols-4 gap-1">
+          <div className="grid grid-cols-4 sm:grid-cols-4 gap-1 sm:gap-4">
             <PowerUpGuide type="HyperBounce" desc="Speed+" />
             <PowerUpGuide type="Magnetism" desc="Attract" />
             <PowerUpGuide type="AetherShield" desc="Shield" />
@@ -274,18 +276,17 @@ export function TutorialScreen({ onBack }: TutorialScreenProps) {
 function TutorialCard({ icon, title, description, color }: { icon: React.ReactNode; title: string; description: string; color: string }) {
   return (
     <div
-      className="rounded-xl"
+      className="rounded-xl sm:rounded-2xl p-2 sm:p-5 shadow-xs sm:shadow-sm transition-all hover:sm:-translate-y-0.5"
       style={{
-        background: 'rgba(255,255,255,0.78)',
-        borderLeft: `3px solid ${color}`,
-        padding: 'clamp(5px, 1.2vh, 10px) 8px',
+        background: 'rgba(255,255,255,0.85)',
+        borderLeft: `4px solid ${color}`,
       }}
     >
-      <div className="flex items-center gap-1 mb-0.5" style={{ color }}>
+      <div className="flex items-center gap-1 sm:gap-2.5 mb-0.5 sm:mb-2" style={{ color }}>
         {icon}
-        <h3 className="font-bold" style={{ color: COLORS.primary, fontSize: 'clamp(0.6rem, 1.8vw, 0.78rem)' }}>{title}</h3>
+        <h3 className="font-bold text-xs sm:text-base" style={{ color: COLORS.primary }}>{title}</h3>
       </div>
-      <p style={{ color: COLORS.uiTextSecondary, fontSize: 'clamp(0.5rem, 1.5vw, 0.68rem)', lineHeight: 1.35 }}>{description}</p>
+      <p className="text-[0.65rem] sm:text-sm leading-tight sm:leading-relaxed" style={{ color: COLORS.uiTextSecondary }}>{description}</p>
     </div>
   );
 }
@@ -294,38 +295,38 @@ function PowerUpGuide({ type, desc }: { type: PowerUpType; desc: string }) {
   const icon = POWERUP.icons[type];
 
   let fallbackSymbol = '';
-  if (type === 'GrowPaddle') fallbackSymbol = '?';
-  else if (type === 'ShrinkPaddle') fallbackSymbol = '??';
-  else if (type === 'SpeedUpBall') fallbackSymbol = '?';
-  else if (type === 'SlowDownBall') fallbackSymbol = '?';
-  else if (type === 'ChaosZone') fallbackSymbol = '?';
-  else if (type === 'BlastRadius') fallbackSymbol = '??';
-  else if (type === 'LaserPaddle') fallbackSymbol = '??';
-  else if (type === 'Multiball') fallbackSymbol = '?';
+  if (type === 'GrowPaddle') fallbackSymbol = '+';
+  else if (type === 'ShrinkPaddle') fallbackSymbol = '-';
+  else if (type === 'SpeedUpBall') fallbackSymbol = '>>';
+  else if (type === 'SlowDownBall') fallbackSymbol = '<<';
+  else if (type === 'ChaosZone') fallbackSymbol = '!';
+  else if (type === 'BlastRadius') fallbackSymbol = '*';
+  else if (type === 'LaserPaddle') fallbackSymbol = 'L';
+  else if (type === 'Multiball') fallbackSymbol = '3x';
 
   return (
     <div
-      className="flex flex-col items-center gap-0.5 rounded-lg"
-      style={{ background: 'rgba(255,255,255,0.6)', padding: '4px 2px' }}
+      className="flex flex-col items-center gap-0.5 sm:gap-1.5 rounded-lg sm:rounded-2xl p-1 sm:p-3.5 shadow-xs"
+      style={{ background: 'rgba(255,255,255,0.7)' }}
     >
       {icon ? (
-        <img src={icon} alt={type} className="w-6 h-6 object-contain" />
+        <img src={icon} alt={type} className="w-5 h-5 sm:w-9 sm:h-9 object-contain" />
       ) : (
         <div
-          className="w-6 h-6 rounded-full flex items-center justify-center border"
+          className="w-5 h-5 sm:w-9 sm:h-9 rounded-full flex items-center justify-center border"
           style={{
             background: POWERUP.colors[type],
             borderColor: 'rgba(255,255,255,0.8)',
             color: '#10002B',
-            fontSize: '0.55rem',
-            fontWeight: 700,
+            fontSize: '0.7rem',
+            fontWeight: 800,
           }}
         >
           {fallbackSymbol}
         </div>
       )}
-      <span className="text-center leading-tight" style={{ color: POWERUP.colors[type], fontSize: '0.45rem', fontWeight: 700 }}>{POWERUP.labels[type]}</span>
-      <span className="text-center leading-tight" style={{ color: COLORS.uiTextSecondary, fontSize: '0.42rem', opacity: 0.8 }}>{desc}</span>
+      <span className="text-center leading-tight text-[0.5rem] sm:text-xs font-black truncate w-full" style={{ color: POWERUP.colors[type] }}>{POWERUP.labels[type]}</span>
+      <span className="text-center leading-tight text-[0.45rem] sm:text-xs opacity-85 font-medium" style={{ color: COLORS.uiTextSecondary }}>{desc}</span>
     </div>
   );
 }
@@ -352,41 +353,39 @@ export function PauseScreen({ onResume, onRestart, onQuit, engine }: PauseScreen
 
   return (
     <div
-      className="absolute inset-0 overflow-hidden flex items-center justify-center"
-      style={{ background: 'rgba(60,9,108,0.82)', backdropFilter: 'blur(4px)' }}
+      className="absolute inset-0 overflow-hidden flex items-center justify-center p-2 sm:p-8"
+      style={{ background: 'rgba(60,9,108,0.82)', backdropFilter: 'blur(8px)' }}
     >
       <div
-        className="flex flex-col items-center w-full mx-3"
+        className="flex flex-col items-center w-full max-w-[250px] sm:max-w-md rounded-xl sm:rounded-3xl my-auto overflow-y-auto max-h-[96dvh]"
         style={{
-          maxWidth: 340,
           background: 'rgba(255,255,255,0.97)',
-          borderRadius: 18,
-          padding: 'clamp(8px, 2vh, 20px) clamp(10px, 2.5vw, 24px)',
-          boxShadow: '0 14px 44px rgba(0,0,0,0.35)',
-          gap: 'clamp(5px, 1.2vh, 12px)',
+          boxShadow: '0 25px 65px rgba(0,0,0,0.38)',
+          padding: 'clamp(6px, 1.5vh, 40px) clamp(8px, 2.5vw, 40px)',
+          gap: 'clamp(3px, 1.2vh, 24px)',
         }}
       >
-        <div className="flex items-center gap-1.5">
-          <Pause size={20} style={{ color: COLORS.primary }} />
+        <div className="flex items-center gap-1.5 sm:gap-3">
+          <Pause className="w-3.5 h-3.5 sm:w-9 sm:h-9" style={{ color: COLORS.primary }} />
           <h2
-            className="font-black"
-            style={{ color: COLORS.primary, fontFamily: "'Fredoka One', sans-serif", fontSize: 'clamp(1rem, 3.5vw, 1.6rem)' }}
+            className="font-black text-base sm:text-4xl"
+            style={{ color: COLORS.primary, fontFamily: "'Fredoka One', sans-serif" }}
           >
             PAUSED
           </h2>
         </div>
 
         {state && (
-          <div className="text-center" style={{ lineHeight: 1.4 }}>
-            <p style={{ color: COLORS.uiTextSecondary, fontSize: 'clamp(0.58rem, 1.8vw, 0.75rem)' }}>
+          <div className="text-center space-y-0.5 sm:space-y-1.5">
+            <p className="text-[0.65rem] sm:text-base font-semibold" style={{ color: COLORS.uiTextSecondary }}>
               Level {state.level}: {LEVEL_CONFIGS[state.level - 1]?.name}
             </p>
-            <p className="font-bold" style={{ color: COLORS.accent, fontSize: 'clamp(0.7rem, 2.2vw, 0.9rem)' }}>
+            <p className="font-extrabold text-xs sm:text-2xl" style={{ color: COLORS.accent }}>
               Score: {state.score.toLocaleString()}
             </p>
-            <div className="flex items-center justify-center gap-0.5 mt-0.5">
+            <div className="flex items-center justify-center gap-1 sm:gap-1.5 mt-0.5 sm:mt-2">
               {Array.from({ length: state.lives }).map((_, i) => (
-                <Heart key={i} size={12} fill={COLORS.heartFull} color={COLORS.heartFull} />
+                <Heart key={i} className="w-2.5 h-2.5 sm:w-5 sm:h-5" fill={COLORS.heartFull} color={COLORS.heartFull} />
               ))}
             </div>
           </div>
@@ -396,10 +395,10 @@ export function PauseScreen({ onResume, onRestart, onQuit, engine }: PauseScreen
           <SensitivityControl value={settings.paddleSensitivity} onChange={handleSensitivityChange} compact />
         </div>
 
-        <div className="flex flex-col w-full" style={{ gap: 'clamp(4px, 1vh, 9px)' }}>
-          <ActionButton icon={<Play size={15} />} label="RESUME" color={COLORS.secondary} onClick={onResume} />
-          <ActionButton icon={<RotateCcw size={15} />} label="RESTART LEVEL" color={COLORS.accent} onClick={onRestart} />
-          <ActionButton icon={<Home size={15} />} label="QUIT TO MENU" color="#888" onClick={onQuit} />
+        <div className="flex flex-col w-full gap-1 sm:gap-3.5">
+          <ActionButton icon={<Play className="w-3 h-3 sm:w-5 sm:h-5" />} label="RESUME" color={COLORS.secondary} onClick={onResume} />
+          <ActionButton icon={<RotateCcw className="w-3 h-3 sm:w-5 sm:h-5" />} label="RESTART LEVEL" color={COLORS.accent} onClick={onRestart} />
+          <ActionButton icon={<Home className="w-3 h-3 sm:w-5 sm:h-5" />} label="QUIT TO MENU" color="#888" onClick={onQuit} />
         </div>
       </div>
     </div>
@@ -421,62 +420,60 @@ export function GameOverScreen({ score, level, bestScore, onRestart, onMenu }: G
 
   return (
     <div
-      className="absolute inset-0 overflow-hidden flex items-center justify-center"
-      style={{ background: 'rgba(60,9,108,0.88)', backdropFilter: 'blur(6px)' }}
+      className="absolute inset-0 overflow-hidden flex items-center justify-center p-2 sm:p-8"
+      style={{ background: 'rgba(60,9,108,0.88)', backdropFilter: 'blur(8px)' }}
     >
       <div
-        className="flex flex-col items-center w-full mx-3"
+        className="flex flex-col items-center w-full max-w-[250px] sm:max-w-md rounded-xl sm:rounded-3xl my-auto overflow-y-auto max-h-[96dvh]"
         style={{
-          maxWidth: 340,
           background: 'rgba(255,255,255,0.97)',
-          borderRadius: 18,
-          padding: 'clamp(8px, 2vh, 20px) clamp(12px, 2.5vw, 24px)',
-          boxShadow: '0 14px 44px rgba(0,0,0,0.35)',
-          gap: 'clamp(5px, 1.2vh, 12px)',
+          boxShadow: '0 25px 65px rgba(0,0,0,0.38)',
+          padding: 'clamp(6px, 1.5vh, 40px) clamp(8px, 2.5vw, 40px)',
+          gap: 'clamp(3px, 1.2vh, 24px)',
         }}
       >
         <h2
-          className="font-black"
+          className="font-black text-lg sm:text-5xl"
           style={{
             color: '#FF4D6D',
             fontFamily: "'Fredoka One', sans-serif",
-            fontSize: 'clamp(1.3rem, 5.5vw, 2.2rem)',
-            textShadow: '0 2px 0 rgba(255,77,109,0.2)',
+            textShadow: '0 3px 0 rgba(255,77,109,0.25)',
           }}
         >
           GAME OVER
         </h2>
 
         {isNewBest && (
-          <div className="flex items-center gap-1.5 px-3 py-0.5 rounded-full" style={{ background: COLORS.accent + '22' }}>
-            <Star size={12} fill={COLORS.accent} color={COLORS.accent} />
-            <span className="font-bold" style={{ color: COLORS.accent, fontSize: '0.65rem' }}>NEW BEST SCORE!</span>
+          <div className="flex items-center gap-1 px-2 py-0.5 sm:px-5 sm:py-2 rounded-full" style={{ background: COLORS.accent + '22' }}>
+            <Star className="w-2.5 h-2.5 sm:w-5 sm:h-5" fill={COLORS.accent} color={COLORS.accent} />
+            <span className="font-bold text-[0.62rem] sm:text-sm tracking-wide" style={{ color: COLORS.accent }}>NEW BEST SCORE!</span>
           </div>
         )}
 
         <div
-          className="w-full"
+          className="w-full space-y-0.5 sm:space-y-3.5 py-1 sm:py-5"
           style={{
             borderTop: '1px solid rgba(0,0,0,0.08)',
             borderBottom: '1px solid rgba(0,0,0,0.08)',
-            padding: 'clamp(5px, 1.2vh, 10px) 0',
           }}
         >
-          {[
-            { label: 'Final Score', value: score.toLocaleString(), valueStyle: { color: COLORS.primary, fontWeight: 900, fontSize: 'clamp(0.9rem, 3.5vw, 1.3rem)' } },
-            { label: 'Level Reached', value: String(level), valueStyle: { color: COLORS.secondary, fontWeight: 700, fontSize: 'clamp(0.75rem, 2.5vw, 0.9rem)' } },
-            { label: 'Best Score', value: bestScore.toLocaleString(), valueStyle: { color: COLORS.accent, fontWeight: 700, fontSize: 'clamp(0.75rem, 2.5vw, 0.9rem)' } },
-          ].map(({ label, value, valueStyle }) => (
-            <div key={label} className="flex justify-between items-center" style={{ marginBottom: 3 }}>
-              <span style={{ color: COLORS.uiTextSecondary, fontSize: 'clamp(0.58rem, 1.8vw, 0.75rem)' }}>{label}</span>
-              <span style={valueStyle}>{value}</span>
-            </div>
-          ))}
+          <div className="flex justify-between items-center text-[0.65rem] sm:text-base">
+            <span style={{ color: COLORS.uiTextSecondary }}>Final Score</span>
+            <span className="font-black text-[0.7rem] sm:text-2xl" style={{ color: COLORS.primary }}>{score.toLocaleString()}</span>
+          </div>
+          <div className="flex justify-between items-center text-[0.65rem] sm:text-base">
+            <span style={{ color: COLORS.uiTextSecondary }}>Level Reached</span>
+            <span className="font-bold sm:text-lg" style={{ color: COLORS.secondary }}>{level}</span>
+          </div>
+          <div className="flex justify-between items-center text-[0.65rem] sm:text-base">
+            <span style={{ color: COLORS.uiTextSecondary }}>Best Score</span>
+            <span className="font-bold sm:text-lg" style={{ color: COLORS.accent }}>{bestScore.toLocaleString()}</span>
+          </div>
         </div>
 
-        <div className="flex flex-col w-full" style={{ gap: 'clamp(4px, 1vh, 9px)' }}>
-          <ActionButton icon={<RotateCcw size={15} />} label="TRY AGAIN" color={COLORS.secondary} onClick={onRestart} />
-          <ActionButton icon={<Home size={15} />} label="MAIN MENU" color="#888" onClick={onMenu} />
+        <div className="flex flex-col w-full gap-1 sm:gap-3.5">
+          <ActionButton icon={<RotateCcw className="w-3 h-3 sm:w-5 sm:h-5" />} label="TRY AGAIN" color={COLORS.secondary} onClick={onRestart} />
+          <ActionButton icon={<Home className="w-3 h-3 sm:w-5 sm:h-5" />} label="MAIN MENU" color="#888" onClick={onMenu} />
         </div>
       </div>
     </div>
@@ -493,19 +490,19 @@ interface VictoryScreenProps {
 export function VictoryScreen({ score, onMenu }: VictoryScreenProps) {
   return (
     <div
-      className="absolute inset-0 overflow-hidden flex items-center justify-center"
-      style={{ background: 'rgba(90,24,154,0.9)', backdropFilter: 'blur(6px)' }}
+      className="absolute inset-0 overflow-hidden flex items-center justify-center p-2 sm:p-8"
+      style={{ background: 'rgba(90,24,154,0.92)', backdropFilter: 'blur(8px)' }}
     >
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {Array.from({ length: 18 }).map((_, i) => (
+        {Array.from({ length: 24 }).map((_, i) => (
           <div
             key={i}
             className="absolute"
             style={{
-              width: 5 + (i % 3) * 4,
-              height: 5 + (i % 3) * 4,
+              width: 6 + (i % 3) * 6,
+              height: 6 + (i % 3) * 6,
               background: [COLORS.accent, COLORS.secondary, '#FF006E', COLORS.shield][i % 4],
-              left: `${(i * 5.5) % 100}%`,
+              left: `${(i * 4.3) % 100}%`,
               top: '-20px',
               borderRadius: i % 2 === 0 ? '50%' : '2px',
               animation: `confettiFall ${3 + (i % 4)}s linear infinite`,
@@ -517,36 +514,33 @@ export function VictoryScreen({ score, onMenu }: VictoryScreenProps) {
       </div>
 
       <div
-        className="flex flex-col items-center w-full mx-3 relative z-10"
+        className="flex flex-col items-center w-full max-w-[250px] sm:max-w-md rounded-xl sm:rounded-3xl relative z-10 my-auto overflow-y-auto max-h-[96dvh]"
         style={{
-          maxWidth: 340,
           background: 'rgba(255,255,255,0.97)',
-          borderRadius: 18,
-          padding: 'clamp(10px, 2.5vh, 24px) clamp(12px, 2.5vw, 24px)',
-          boxShadow: '0 14px 44px rgba(0,0,0,0.35)',
-          gap: 'clamp(6px, 1.5vh, 14px)',
+          boxShadow: '0 25px 65px rgba(0,0,0,0.38)',
+          padding: 'clamp(6px, 1.5vh, 40px) clamp(8px, 2.5vw, 40px)',
+          gap: 'clamp(3px, 1.2vh, 24px)',
         }}
       >
-        <Trophy size={36} style={{ color: COLORS.accent }} />
+        <Trophy className="w-6 h-6 sm:w-16 sm:h-16" style={{ color: COLORS.accent }} />
         <h2
-          className="font-black text-center"
+          className="font-black text-lg sm:text-5xl text-center"
           style={{
             color: COLORS.primary,
             fontFamily: "'Fredoka One', sans-serif",
-            fontSize: 'clamp(1.4rem, 5.5vw, 2.2rem)',
           }}
         >
           VICTORY!
         </h2>
-        <p className="text-center" style={{ color: COLORS.uiTextSecondary, fontSize: 'clamp(0.6rem, 1.8vw, 0.8rem)' }}>
-          You conquered all 20 levels!
+        <p className="text-center text-[0.65rem] sm:text-base leading-snug" style={{ color: COLORS.uiTextSecondary }}>
+          You conquered all 20 levels and mastered the Aether!
         </p>
-        <div className="text-center px-5 py-2 rounded-2xl" style={{ background: 'rgba(255,158,0,0.1)' }}>
-          <p style={{ color: COLORS.uiTextSecondary, fontSize: '0.65rem', marginBottom: 2 }}>Final Score</p>
-          <p className="font-black" style={{ color: COLORS.accent, fontSize: 'clamp(1.3rem, 5vw, 2rem)' }}>{score.toLocaleString()}</p>
+        <div className="text-center px-3 py-1 sm:px-10 sm:py-4 rounded-xl sm:rounded-2xl" style={{ background: 'rgba(255,158,0,0.12)' }}>
+          <p className="text-[0.6rem] sm:text-sm mb-0.5 uppercase tracking-wider font-semibold" style={{ color: COLORS.uiTextSecondary }}>Final Score</p>
+          <p className="font-black text-lg sm:text-4xl" style={{ color: COLORS.accent }}>{score.toLocaleString()}</p>
         </div>
         <div className="w-full">
-          <ActionButton icon={<Home size={15} />} label="MAIN MENU" color={COLORS.secondary} onClick={onMenu} />
+          <ActionButton icon={<Home className="w-3 h-3 sm:w-5 sm:h-5" />} label="MAIN MENU" color={COLORS.secondary} onClick={onMenu} />
         </div>
       </div>
     </div>
@@ -676,27 +670,26 @@ export function SettingsScreen({ onBack }: SettingsScreenProps) {
 
   return (
     <div
-      className="absolute inset-0 overflow-hidden flex flex-col"
+      className="absolute inset-0 overflow-hidden flex flex-col justify-center"
       style={{ background: `linear-gradient(135deg, ${COLORS.background} 0%, #B8F0BE 100%)` }}
     >
-      {/* Fixed header — always visible */}
-      <div className="flex-shrink-0 flex items-center gap-2 px-2.5 pt-1.5 pb-1">
+      {/* Fixed header */}
+      <div className="flex-shrink-0 flex items-center gap-2 sm:gap-5 px-2.5 sm:px-10 pt-2 sm:pt-8 pb-1 sm:pb-5 max-w-md w-full mx-auto">
         <button
           onClick={onBack}
-          className="flex items-center gap-1 px-2.5 py-1 rounded-lg transition-all active:scale-95"
-          style={{ background: 'rgba(255,255,255,0.8)', color: COLORS.primary, fontSize: '0.75rem', fontWeight: 700 }}
+          className="flex items-center gap-1 sm:gap-2 px-2.5 sm:px-5 py-1 sm:py-2.5 rounded-lg sm:rounded-2xl transition-all active:scale-95 hover:bg-white shadow-sm hover:shadow-md"
+          style={{ background: 'rgba(255,255,255,0.85)', color: COLORS.primary, fontWeight: 800 }}
         >
-          <ArrowLeft size={14} />
-          Back
+          <ArrowLeft className="w-3.5 h-3.5 sm:w-5 sm:h-5" />
+          <span className="text-xs sm:text-sm tracking-wide">Back</span>
         </button>
-        <div className="flex items-center gap-1.5">
-          <Settings size={18} style={{ color: COLORS.secondary }} />
+        <div className="flex items-center gap-2 sm:gap-3">
+          <Settings className="w-4 h-4 sm:w-8 sm:h-8" style={{ color: COLORS.secondary }} />
           <h2
-            className="font-black"
+            className="font-black text-sm sm:text-3xl"
             style={{
               color: COLORS.primary,
               fontFamily: "'Fredoka One', sans-serif",
-              fontSize: 'clamp(0.9rem, 3vw, 1.6rem)',
             }}
           >
             Settings
@@ -705,34 +698,34 @@ export function SettingsScreen({ onBack }: SettingsScreenProps) {
       </div>
 
       {/* Scrollable body */}
-      <div className="flex-1 overflow-y-auto px-2.5 pb-2">
-        <div className="flex flex-col gap-1.5 max-w-md mx-auto">
+      <div className="flex-1 overflow-y-auto px-2.5 sm:px-10 pb-3 sm:pb-10 max-w-md w-full mx-auto my-auto">
+        <div className="flex flex-col gap-2.5 sm:gap-5 p-0 sm:p-6 sm:bg-white/40 sm:backdrop-blur-md sm:rounded-3xl sm:shadow-lg">
           <SensitivityControl value={settings.paddleSensitivity} onChange={handleSensitivityChange} />
 
           <SettingsToggle
-            icon={settings.soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
+            icon={settings.soundEnabled ? <Volume2 className="w-4 h-4 sm:w-6 sm:h-6" /> : <VolumeX className="w-4 h-4 sm:w-6 sm:h-6" />}
             label="Sound Effects"
             enabled={settings.soundEnabled}
             onToggle={toggleSound}
           />
 
           <SettingsToggle
-            icon={<Music size={16} />}
+            icon={<Music className="w-4 h-4 sm:w-6 sm:h-6" />}
             label="Music"
             enabled={settings.musicEnabled}
             onToggle={toggleMusic}
           />
 
-          <div className="mt-1.5 pt-2.5" style={{ borderTop: '1px solid rgba(0,0,0,0.1)' }}>
-            <p className="mb-1.5 font-semibold" style={{ color: COLORS.uiTextSecondary, fontSize: '0.68rem' }}>Data Management</p>
+          <div className="mt-2 sm:mt-6 pt-3 sm:pt-6" style={{ borderTop: '1px solid rgba(0,0,0,0.1)' }}>
+            <p className="mb-1.5 sm:mb-3 font-bold text-xs sm:text-sm uppercase tracking-wider" style={{ color: COLORS.uiTextSecondary }}>Data Management</p>
             <button
               onClick={handleReset}
-              className="w-full rounded-xl font-bold text-white transition-all active:scale-95"
-              style={{ background: '#FF4D6D', padding: '7px 14px', fontSize: '0.78rem' }}
+              className="w-full rounded-xl sm:rounded-2xl font-black text-white transition-all active:scale-95 py-2 sm:py-4 px-4 sm:px-6 text-xs sm:text-sm hover:opacity-90 shadow-sm hover:shadow-md"
+              style={{ background: '#FF4D6D' }}
             >
               Reset All Data
             </button>
-            <p className="mt-1 opacity-50" style={{ color: COLORS.uiTextSecondary, fontSize: '0.6rem' }}>
+            <p className="mt-1 sm:mt-2 opacity-60 text-[0.6rem] sm:text-xs font-semibold" style={{ color: COLORS.uiTextSecondary }}>
               This will delete all progress and saves.
             </p>
           </div>
@@ -746,20 +739,20 @@ function SettingsToggle({ icon, label, enabled, onToggle }: { icon: React.ReactN
   return (
     <button
       onClick={onToggle}
-      className="flex items-center justify-between w-full rounded-xl transition-all active:scale-95"
-      style={{ background: 'rgba(255,255,255,0.78)', padding: '8px 12px' }}
+      className="flex items-center justify-between w-full rounded-xl sm:rounded-2xl transition-all active:scale-95 p-2.5 sm:p-4 hover:sm:shadow-md"
+      style={{ background: 'rgba(255,255,255,0.85)' }}
     >
-      <div className="flex items-center gap-2" style={{ color: COLORS.primary }}>
+      <div className="flex items-center gap-2 sm:gap-3" style={{ color: COLORS.primary }}>
         {icon}
-        <span className="font-bold" style={{ fontSize: '0.8rem' }}>{label}</span>
+        <span className="font-bold text-xs sm:text-base">{label}</span>
       </div>
       <div
-        className="w-9 h-5 rounded-full relative transition-all"
+        className="w-9 h-5 sm:w-12 sm:h-7 rounded-full relative transition-all"
         style={{ background: enabled ? COLORS.secondary : 'rgba(0,0,0,0.15)' }}
       >
         <div
-          className="absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-all"
-          style={{ left: enabled ? 17 : 2 }}
+          className="absolute top-0.5 sm:top-1 w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-white shadow transition-all"
+          style={{ left: enabled ? (window.innerWidth >= 640 ? 24 : 17) : 2 }}
         />
       </div>
     </button>
@@ -779,11 +772,10 @@ function ActionButton({ icon, label, color, onClick }: ActionButtonProps) {
   return (
     <button
       onClick={onClick}
-      className="flex items-center justify-center gap-2 w-full rounded-xl font-bold text-white transition-all active:scale-95 hover:opacity-90"
+      className="flex items-center justify-center gap-1.5 sm:gap-3.5 w-full rounded-lg sm:rounded-2xl font-black text-white transition-all active:scale-95 hover:sm:scale-[1.02] hover:sm:shadow-lg py-1.5 sm:py-4 px-3 sm:px-8 text-[0.72rem] sm:text-base tracking-wider uppercase"
       style={{
         background: color,
-        padding: 'clamp(6px, 1.6vh, 12px) 14px',
-        fontSize: 'clamp(0.65rem, 2vw, 0.85rem)',
+        boxShadow: `0 4px 14px ${color}35`,
       }}
     >
       {icon}
